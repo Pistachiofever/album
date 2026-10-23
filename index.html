@@ -1,0 +1,1582 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="相簿工房">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#F7F2EC">
+<title>相簿工房</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📔</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700&family=Shippori+Mincho:wght@500;700&family=Klee+One:wght@400;600&family=Yomogi&family=Kaisei+Decol:wght@500&family=Dela+Gothic+One&family=Hachi+Maru+Pop&family=Mochiy+Pop+One&family=DotGothic16&family=Zen+Kurenaido&family=LXGW+WenKai+TC&family=Noto+Serif+TC:wght@500&display=swap">
+<style>
+:root{
+  --bg:#F7F2EC;--card:#FFFFFF;--ink:#2F2723;--sub:#8C8079;--line:#E9E0D6;
+  --acc:#C0607E;--acc2:#F6DFE7;--danger:#C2453B;
+  --sans:-apple-system,BlinkMacSystemFont,"PingFang HK","PingFang TC","Hiragino Sans","Noto Sans TC","Microsoft JhengHei",sans-serif;
+  --round:"Zen Maru Gothic",var(--sans);
+}
+@media (prefers-color-scheme:dark){
+  :root{--bg:#1C1917;--card:#28231F;--ink:#F3ECE6;--sub:#A99D93;--line:#3B342E;--acc:#E58FAE;--acc2:#4A2E38;--danger:#F07B70}
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{height:100%}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased;min-height:100%}
+body.lock{overflow:hidden}
+button{font-family:inherit;font-size:inherit;color:inherit;background:none;border:0;cursor:pointer;touch-action:manipulation}
+input,textarea,select{font-family:inherit;font-size:16px;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;width:100%;outline:none}
+input:focus,textarea:focus,select:focus{border-color:var(--acc)}
+textarea{resize:vertical;min-height:70px;line-height:1.5}
+input[type=color]{padding:2px;height:40px;width:52px;border-radius:10px;flex:none}
+input[type=range]{padding:0;border:0;background:none;accent-color:var(--acc)}
+input[type=checkbox]{width:auto;accent-color:var(--acc);transform:scale(1.2)}
+.wrap{max-width:640px;margin:0 auto;padding:0 16px calc(96px + env(safe-area-inset-bottom))}
+header.top{position:sticky;top:0;z-index:20;background:var(--bg);background:color-mix(in srgb,var(--bg) 90%,transparent);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);padding:max(10px,env(safe-area-inset-top)) 12px 8px}
+.top-in{max-width:640px;margin:0 auto;display:flex;align-items:center;gap:4px}
+.top h1{flex:1;min-width:0;font-family:var(--round);font-size:20px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 4px}
+.ib{width:40px;height:40px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:19px;flex:none}
+.ib:active{background:var(--line)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 16px;border-radius:999px;border:1px solid var(--line);background:var(--card);font-size:15px;font-weight:600;white-space:nowrap}
+.btn.pri{background:var(--acc);border-color:var(--acc);color:#fff}
+.btn.sm{padding:6px 12px;font-size:13px}
+.btn.block{width:100%}
+.btn.danger{color:var(--danger)}
+.btn:active{transform:scale(.98)}
+.btn[disabled]{opacity:.5}
+.row{display:flex;gap:8px;align-items:center}
+.row.wrap2{flex-wrap:wrap}
+.grow{flex:1;min-width:0}
+.muted{color:var(--sub);font-size:13px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--card);font-size:14px}
+.chip.on{border-color:var(--acc);background:var(--acc2)}
+.hs .chip{flex:none;white-space:nowrap}
+.hs{display:flex;gap:10px;overflow-x:auto;padding:3px 3px 8px;margin:0 -3px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.hs::-webkit-scrollbar{display:none}
+.tile{flex:none;width:74px;text-align:center;font-size:12px;line-height:1.3;color:var(--sub)}
+.tile .im{width:74px;height:74px;border-radius:14px;background:var(--card);overflow:hidden;display:flex;align-items:center;justify-content:center;margin-bottom:5px;box-shadow:0 0 0 1px var(--line)}
+.tile .im img,.tile .im canvas{width:100%;height:100%;object-fit:cover;display:block}
+.tile.on .im{box-shadow:0 0 0 2.5px var(--acc)}
+.tile.on{color:var(--ink);font-weight:600}
+.tile.wide{width:112px}.tile.wide .im{width:112px}
+.scene{flex:none;width:118px;border-radius:14px;background:var(--card);box-shadow:0 0 0 1px var(--line);padding:8px;text-align:left}
+.scene.on{box-shadow:0 0 0 2.5px var(--acc)}
+.scene .sw{display:flex;gap:3px;margin-bottom:6px;align-items:center}
+.scene .sw i{width:15px;height:15px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(0,0,0,.08)}
+.scene .sw img,.scene .sw canvas{width:26px;height:26px;margin-left:auto;border-radius:6px}
+.scene b{display:block;font-size:13px}
+.scene small{display:block;font-size:11px;color:var(--sub)}
+.sec{margin-bottom:20px}
+.sec>h3{font-size:14px;color:var(--sub);font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.sec>h3 .r{margin-left:auto;font-weight:400}
+.card{background:var(--card);border-radius:16px;padding:14px;box-shadow:0 0 0 1px var(--line)}
+.lbl{display:block;font-size:13px;color:var(--sub);margin:10px 0 5px}
+.seg{display:flex;background:var(--line);border-radius:12px;padding:3px;gap:2px}
+.seg button{flex:1;padding:7px 4px;border-radius:9px;font-size:14px;color:var(--sub)}
+.seg button.on{background:var(--card);color:var(--ink);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+/* home */
+.hero{padding:22px 4px 8px}
+.hero h2{font-family:var(--round);font-size:24px;line-height:1.3}
+.hero p{color:var(--sub);font-size:14px;margin-top:4px}
+.albums{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:16px}
+.alb{text-align:left}
+.alb .cv{aspect-ratio:4/5;border-radius:10px;overflow:hidden;background:var(--line);box-shadow:0 2px 10px rgba(0,0,0,.08)}
+.alb .cv img{width:100%;height:100%;object-fit:cover;display:block}
+.alb b{display:block;font-size:15px;margin-top:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.alb small{color:var(--sub);font-size:12px}
+.empty{margin-top:26px;text-align:center;padding:30px 18px}
+.empty .big{font-size:54px}
+.tip{display:flex;gap:10px;align-items:flex-start;background:var(--acc2);border-radius:14px;padding:12px 14px;font-size:13px;margin-top:14px}
+.tip .x{margin-left:auto;font-size:16px;color:var(--sub);padding:0 4px}
+.fab{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(18px + env(safe-area-inset-bottom));z-index:15;box-shadow:0 6px 20px rgba(192,96,126,.35);padding:13px 24px;font-size:16px}
+/* album */
+.pages{display:flex;flex-direction:column;gap:26px;padding-top:16px}
+.pimg{position:relative;width:100%;border-radius:4px;overflow:hidden;background:var(--line);box-shadow:0 3px 14px rgba(0,0,0,.10)}
+.pimg img{width:100%;height:100%;display:block}
+.pimg .ld{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.25)}
+.spin{width:28px;height:28px;border-radius:50%;border:3px solid rgba(0,0,0,.12);border-top-color:var(--acc);animation:sp 0.8s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.pbar{display:flex;gap:6px;margin-top:8px;align-items:center}
+.pbar .t{flex:1;min-width:0;font-size:13px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* sheet */
+.scrim{position:fixed;inset:0;background:rgba(25,18,12,.4);z-index:50;opacity:0;transition:opacity .2s}
+.scrim.show{opacity:1}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:51;max-height:93vh;max-height:93dvh;background:var(--bg);border-radius:20px 20px 0 0;display:flex;flex-direction:column;transform:translateY(105%);transition:transform .26s ease;max-width:640px;margin:0 auto;box-shadow:0 -8px 30px rgba(0,0,0,.18)}
+.sheet.show{transform:none}
+.sheet.tall{height:93vh;height:93dvh}
+.sh-hd{display:flex;align-items:center;gap:6px;padding:10px 10px 8px 18px;border-bottom:1px solid var(--line);flex:none}
+.sh-hd h2{flex:1;font-size:17px;font-family:var(--round);font-weight:700;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sh-pv{flex:none;padding:10px 16px 6px;display:flex;justify-content:center;border-bottom:1px solid var(--line);background:var(--bg)}
+.sh-pv .pvbox{position:relative;height:30vh;max-height:300px}
+.sh-pv img{height:100%;width:auto;display:block;border-radius:3px;box-shadow:0 2px 10px rgba(0,0,0,.12)}
+.sh-pv .ld{position:absolute;right:6px;top:6px}
+.sh-pv .ld .spin{width:18px;height:18px;border-width:2px}
+.sh-bd{overflow-y:auto;padding:14px 16px calc(24px + env(safe-area-inset-bottom));-webkit-overflow-scrolling:touch;overscroll-behavior:contain;flex:1}
+.toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);background:rgba(40,32,28,.92);color:#fff;padding:10px 18px;border-radius:999px;font-size:14px;z-index:90;opacity:0;transition:all .25s;pointer-events:none;max-width:88vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%)}
+.busy{position:fixed;inset:0;z-index:80;background:rgba(25,18,12,.45);display:flex;align-items:center;justify-content:center;padding:24px}
+.busy .card{width:100%;max-width:320px;text-align:center}
+.bar{height:8px;border-radius:99px;background:var(--line);overflow:hidden;margin-top:12px}
+.bar i{display:block;height:100%;width:0;background:var(--acc);transition:width .2s}
+.pills{margin-top:8px}
+.pill{display:inline-block;font-size:12px;padding:2px 9px;border-radius:99px;background:var(--acc2);margin:0 4px 4px 0}
+.ph-row{display:flex;gap:10px;align-items:center;padding:8px 0;border-top:1px solid var(--line)}
+.ph-row img{width:56px;height:56px;object-fit:cover;border-radius:8px;flex:none;background:var(--line)}
+.ph-row .ops{display:flex;gap:2px;flex-wrap:wrap;margin-top:4px}
+.ph-row .ops button{font-size:12px;padding:3px 8px;border-radius:8px;background:var(--line)}
+.thumbs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.thumbs button{aspect-ratio:1;border-radius:8px;overflow:hidden;background:var(--line);box-shadow:0 0 0 1px var(--line)}
+.thumbs button.on{box-shadow:0 0 0 3px var(--acc)}
+.thumbs img{width:100%;height:100%;object-fit:cover;display:block}
+.exp-img{width:100%;border-radius:4px;box-shadow:0 2px 12px rgba(0,0,0,.12);display:block;-webkit-touch-callout:default}
+.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px}
+.hint{font-size:12px;color:var(--sub);margin-top:6px;line-height:1.5}
+.err{color:var(--danger);font-size:13px;margin-top:6px}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<input type="file" id="filePick" accept="image/*" multiple style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
+<input type="file" id="jsonPick" accept=".json,application/json" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
+<script>
+"use strict";
+/* ══════════════ 相簿工房 ══════════════
+   相片只存喺呢部機（IndexedDB），唔會上傳去任何 server。
+   所有裝飾素材（花紋、貼紙、相框、紙膠帶、背景紙）都係用 code 即場畫，
+   冇任何外部圖片；字體用 Google Fonts。 */
+
+/* ───────── 小工具 ───────── */
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>[...r.querySelectorAll(s)];
+function h(tag,attrs,...kids){
+  const e=document.createElement(tag);
+  if(attrs)for(const k in attrs){
+    const v=attrs[k];if(v==null||v===false)continue;
+    if(k==='class')e.className=v;else if(k==='style')e.style.cssText=v;
+    else if(k.startsWith('on')&&typeof v==='function')e.addEventListener(k.slice(2),v);
+    else if(k==='html')e.innerHTML=v;else if(k in e&&k!=='list'&&k!=='type')e[k]=v;else e.setAttribute(k,v===true?'':v);
+  }
+  for(const c of kids.flat()){if(c==null||c===false)continue;e.append(c.nodeType?c:document.createTextNode(String(c)))}
+  return e;
+}
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const nextFrame=()=>new Promise(r=>requestAnimationFrame(()=>r()));
+const hx=c=>{c=String(c||'#888888').replace('#','');if(c.length===3)c=c.split('').map(x=>x+x).join('');return[0,2,4].map(i=>parseInt(c.slice(i,i+2),16)||0)};
+const toHex=a=>'#'+a.map(v=>Math.round(clamp(v,0,255)).toString(16).padStart(2,'0')).join('');
+const mix=(a,b,t)=>{const A=hx(a),B=hx(b);return toHex(A.map((v,i)=>v+(B[i]-v)*t))};
+const rgba=(c,a)=>{const[r,g,b]=hx(c);return`rgba(${r},${g},${b},${a})`};
+const isHex=s=>/^#[0-9a-f]{6}$/i.test(String(s||'').trim());
+function rgb2hsl(r,g,b){r/=255;g/=255;b/=255;const mx=Math.max(r,g,b),mn=Math.min(r,g,b),l=(mx+mn)/2;let h=0,s=0;if(mx!==mn){const d=mx-mn;s=l>.5?d/(2-mx-mn):d/(mx+mn);h=mx===r?(g-b)/d+(g<b?6:0):mx===g?(b-r)/d+2:(r-g)/d+4;h*=60}return[h,s,l]}
+function hsl2rgb(h,s,l){h=((h%360)+360)%360/360;if(!s)return[l*255,l*255,l*255];const q=l<.5?l*(1+s):l+s-l*s,p=2*l-q;const f=t=>{t=(t+1)%1;return t<1/6?p+(q-p)*6*t:t<.5?q:t<2/3?p+(q-p)*(2/3-t)*6:p};return[f(h+1/3)*255,f(h)*255,f(h-1/3)*255]}
+const hslOf=c=>rgb2hsl(...hx(c));
+const fromHsl=(h,s,l)=>toHex(hsl2rgb(h,clamp(s,0,1),clamp(l,0,1)));
+const lum=c=>{const[r,g,b]=hx(c).map(v=>{v/=255;return v<=.03928?v/12.92:((v+.055)/1.055)**2.4});return .2126*r+.7152*g+.0722*b};
+function rng(seed){let a=(seed>>>0)||1;return()=>{a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const hash=s=>{let h=2166136261;for(const c of String(s))h=Math.imul(h^c.charCodeAt(0),16777619);return h>>>0};
+const newSeed=()=>(Math.random()*2**31)>>>0;
+const WD='日一二三四五六';
+function fmtDay(key){if(!key||key==='nodate')return'';const[y,m,d]=key.split('-');const dt=new Date(+y,m-1,+d);return`${y}.${m}.${d}（${WD[dt.getDay()]}）`}
+function fmtRange(a,b){if(!a)return'';const A=a.split('-'),B=(b||a).split('-');if(a===b||!b)return`${A[0]}.${A[1]}.${A[2]}`;if(A[0]===B[0])return`${A[0]}.${A[1]}.${A[2]} – ${B[1]}.${B[2]}`;return`${A[0]}.${A[1]}.${A[2]} – ${B[0]}.${B[1]}.${B[2]}`}
+
+/* ══════════════ 素材庫 ══════════════ */
+
+/* 字體（全部 Google Fonts 免費） */
+const FONTS={
+  zenmaru:{n:'圓體',f:'Zen Maru Gothic',w:500,tw:700},
+  shippori:{n:'明朝',f:'Shippori Mincho',w:500,tw:700},
+  klee:{n:'鉛筆手寫',f:'Klee One',w:400,tw:600},
+  yomogi:{n:'塗鴉手寫',f:'Yomogi',w:400,tw:400},
+  kaisei:{n:'裝飾明朝',f:'Kaisei Decol',w:500,tw:500},
+  dela:{n:'粗黑',f:'Dela Gothic One',w:400,tw:400},
+  hachi:{n:'圓潤可愛',f:'Hachi Maru Pop',w:400,tw:400},
+  mochiy:{n:'POP 字',f:'Mochiy Pop One',w:400,tw:400},
+  dot:{n:'像素',f:'DotGothic16',w:400,tw:400},
+  kurenaido:{n:'毛筆',f:'Zen Kurenaido',w:400,tw:400},
+  wenkai:{n:'文楷（繁中）',f:'LXGW WenKai TC',w:400,tw:400},
+  notoserif:{n:'宋體（繁中）',f:'Noto Serif TC',w:500,tw:500}
+};
+const FALLBACK='"PingFang HK","PingFang TC","Hiragino Sans","Noto Sans TC","Microsoft JhengHei",sans-serif';
+const fontStr=(id,px,title)=>{const F=FONTS[id]||FONTS.zenmaru;return`${title?F.tw:F.w} ${Math.max(1,Math.round(px))}px "${F.f}",${FALLBACK}`};
+async function loadFonts(list){
+  if(!document.fonts||!document.fonts.load)return;
+  const ps=list.map(([id,txt,tt])=>document.fonts.load(fontStr(id,32,tt),(txt||'')+'あ字Aa0').catch(()=>{}));
+  await Promise.race([Promise.all(ps),sleep(4000)]);
+}
+
+/* 相片濾鏡（逐粒像素計，唔靠 ctx.filter，iPhone 都一樣效果） */
+const FILTERS={none:{n:'原相'},film:{n:'菲林暖調'},fade:{n:'褪色'},soft:{n:'粉嫩'},vivid:{n:'鮮豔'},cool:{n:'冷調'},sepia:{n:'懷舊啡'},mono:{n:'黑白'}};
+function filterPixels(d,kind){
+  for(let i=0;i<d.length;i+=4){
+    let r=d[i],g=d[i+1],b=d[i+2],m;
+    switch(kind){
+      case'film':r=r*1.05+14;g=g+6;b=b*.86+16;m=(r+g+b)/3;r=m+(r-m)*.86;g=m+(g-m)*.86;b=m+(b-m)*.86;break;
+      case'fade':r=r*.8+40;g=g*.8+38;b=b*.8+44;break;
+      case'soft':r=r*.88+34;g=g*.86+24;b=b*.88+30;break;
+      case'vivid':m=(r+g+b)/3;r=m+(r-m)*1.35;g=m+(g-m)*1.35;b=m+(b-m)*1.35;r=(r-128)*1.07+128;g=(g-128)*1.07+128;b=(b-128)*1.07+128;break;
+      case'cool':r=r*.92;g=g*.99+4;b=b*1.05+16;break;
+      case'sepia':{const R=r*.393+g*.769+b*.189,G=r*.349+g*.686+b*.168,B=r*.272+g*.534+b*.131;r=r*.2+R*.8;g=g*.2+G*.8;b=b*.2+B*.8}break;
+      case'mono':m=.3*r+.59*g+.11*b;r=g=b=m*1.04+5;break;
+    }
+    d[i]=r;d[i+1]=g;d[i+2]=b;
+  }
+}
+
+/* 裝飾圖案（全部向量，以 (0,0) 為中心、大約 20×20） */
+const P2=s=>new Path2D(s);
+function poly(x,pts){x.beginPath();pts.forEach((p,i)=>i?x.lineTo(p[0],p[1]):x.moveTo(p[0],p[1]));x.closePath()}
+function circ(x,cx,cy,r){x.beginPath();x.arc(cx,cy,r,0,Math.PI*2)}
+function ell(x,cx,cy,rx,ry,rot){x.beginPath();x.ellipse(cx,cy,rx,ry,rot||0,0,Math.PI*2)}
+const MAPLE=(()=>{let d='';const N=180;for(let i=0;i<=N;i++){const a=i/N*Math.PI*2;const r=5.6+4.4*Math.pow(Math.abs(Math.cos(2.5*a)),.55)+.75*Math.cos(25*a);d+=(i?'L':'M')+(r*Math.sin(a)).toFixed(2)+','+(-r*Math.cos(a)).toFixed(2)}return P2(d+'Z')})();
+const MOTIFS={
+  sakura:{n:'櫻花',d(x,c,c2){x.fillStyle=c;const p=P2('M0,-1C-4,-3.5 -5.4,-8 -2.3,-10.4L0,-8.7L2.3,-10.4C5.4,-8 4,-3.5 0,-1Z');for(let i=0;i<5;i++){x.save();x.rotate(i*Math.PI*2/5);x.fill(p);x.restore()}x.fillStyle=c2;circ(x,0,0,1.9);x.fill();for(let i=0;i<5;i++){const a=i*Math.PI*2/5+.6;circ(x,Math.sin(a)*3.4,-Math.cos(a)*3.4,.65);x.fill()}}},
+  petal:{n:'櫻花瓣',d(x,c){x.fillStyle=c;x.fill(P2('M0,-7L-2.4,-10C-8.5,-7 -7,5 0,10C7,5 8.5,-7 2.4,-10Z'))}},
+  plum:{n:'梅花',d(x,c,c2){x.fillStyle=c;for(let i=0;i<5;i++){const a=i*Math.PI*2/5;circ(x,Math.sin(a)*5,-Math.cos(a)*5,4.5);x.fill()}x.fillStyle=c2;circ(x,0,0,2.1);x.fill()}},
+  snow:{n:'雪花',d(x,c){x.strokeStyle=c;x.lineWidth=1.5;x.lineCap='round';for(let i=0;i<6;i++){x.save();x.rotate(i*Math.PI/3);x.beginPath();x.moveTo(0,0);x.lineTo(0,-10);x.moveTo(0,-5.5);x.lineTo(-3,-8.3);x.moveTo(0,-5.5);x.lineTo(3,-8.3);x.stroke();x.restore()}}},
+  firework:{n:'花火',d(x,c,c2){x.lineWidth=1.3;x.lineCap='round';for(let i=0;i<16;i++){const a=i*Math.PI/8,co=i%2?c:c2;x.strokeStyle=co;x.fillStyle=co;x.beginPath();x.moveTo(Math.cos(a)*3.5,Math.sin(a)*3.5);x.lineTo(Math.cos(a)*(i%2?13:10),Math.sin(a)*(i%2?13:10));x.stroke();circ(x,Math.cos(a)*(i%2?15.5:12.5),Math.sin(a)*(i%2?15.5:12.5),1.1);x.fill()}}},
+  maple:{n:'楓葉',d(x,c){x.fillStyle=c;x.fill(MAPLE);x.strokeStyle=c;x.lineWidth=1.2;x.beginPath();x.moveTo(0,3);x.lineTo(.5,13);x.stroke()}},
+  ginkgo:{n:'銀杏',d(x,c){x.fillStyle=c;x.fill(P2('M0,7C-3,3 -8,-1 -9.5,-3.5C-6,-9.6 -2,-9.6 -.8,-7.5L0,-5.4L.8,-7.5C2,-9.6 6,-9.6 9.5,-3.5C8,-1 3,3 0,7Z'));x.strokeStyle=c;x.lineWidth=1.2;x.beginPath();x.moveTo(0,6);x.lineTo(.6,12.5);x.stroke()}},
+  leaf:{n:'葉仔',d(x,c,c2){x.fillStyle=c;x.fill(P2('M0,10C-7,4 -7,-5 0,-10C7,-5 7,4 0,10Z'));x.strokeStyle=c2;x.lineWidth=.9;x.beginPath();x.moveTo(0,9);x.lineTo(0,-8);x.moveTo(0,1);x.lineTo(-3.5,-2.5);x.moveTo(0,4);x.lineTo(3.5,.5);x.stroke()}},
+  bamboo:{n:'竹葉',d(x,c,c2){x.fillStyle=c;const p=P2('M0,0C2,-4 2.4,-9 0,-14C-2.4,-9 -2,-4 0,0Z');[-38,0,36].forEach(a=>{x.save();x.translate(0,6);x.rotate(a*Math.PI/180);x.fill(p);x.restore()});x.strokeStyle=c2;x.lineWidth=1.3;x.beginPath();x.moveTo(0,6);x.lineTo(-2,12);x.stroke()}},
+  lavender:{n:'薰衣草',d(x,c,c2){x.strokeStyle=c2;x.lineWidth=1.2;x.lineCap='round';x.beginPath();x.moveTo(0,12);x.quadraticCurveTo(1,2,0,-11);x.moveTo(.3,6);x.quadraticCurveTo(-4,3,-6,-1);x.stroke();x.fillStyle=c;for(let k=0;k<7;k++){const y=-10+k*2.3;ell(x,-1.5,y,1.3,2,-.45);x.fill();ell(x,1.5,y+1,1.3,2,.45);x.fill()}}},
+  sunflower:{n:'向日葵',d(x,c,c2){x.fillStyle=c;for(let i=0;i<14;i++){const a=i*Math.PI*2/14;ell(x,Math.sin(a)*6.6,-Math.cos(a)*6.6,1.9,4.1,a);x.fill()}x.fillStyle=c2;circ(x,0,0,4.6);x.fill();x.fillStyle='rgba(255,255,255,.35)';for(let i=0;i<6;i++){const a=i*1.05;circ(x,Math.sin(a)*2.3,Math.cos(a)*2.3,.6);x.fill()}}},
+  hydrangea:{n:'繡球花',d(x,c,c2){const pts=[[0,0],[5.6,-3.2],[5.6,3.2],[0,6.4],[-5.6,3.2],[-5.6,-3.2],[0,-6.4]];pts.forEach(([px,py],i)=>{x.fillStyle=i%2?c:c2;for(const[dx,dy]of[[1.9,0],[-1.9,0],[0,1.9],[0,-1.9]]){circ(x,px+dx,py+dy,1.95);x.fill()}x.fillStyle='rgba(255,255,255,.75)';circ(x,px,py,.7);x.fill()})}},
+  raindrop:{n:'雨點',d(x,c){x.fillStyle=c;x.fill(P2('M0,-10C3,-5 6.5,-1 6.5,3A6.5,6.5 0 0 1 -6.5,3C-6.5,-1 -3,-5 0,-10Z'));x.fillStyle='rgba(255,255,255,.5)';ell(x,-2.4,2,1.2,2.2,.3);x.fill()}},
+  butterfly:{n:'蝴蝶',d(x,c,c2){x.fillStyle=c;ell(x,-4.6,-3.6,5,4.1,.55);x.fill();ell(x,4.6,-3.6,5,4.1,-.55);x.fill();x.fillStyle=c2;ell(x,-3.6,3.6,3.5,2.9,-.4);x.fill();ell(x,3.6,3.6,3.5,2.9,.4);x.fill();x.fillStyle='#3a3030';x.beginPath();x.roundRect?x.roundRect(-.8,-6,1.6,12,.8):x.rect(-.8,-6,1.6,12);x.fill();x.strokeStyle='#3a3030';x.lineWidth=.7;x.beginPath();x.moveTo(0,-5.5);x.quadraticCurveTo(-1,-9,-3,-10);x.moveTo(0,-5.5);x.quadraticCurveTo(1,-9,3,-10);x.stroke()}},
+  bean:{n:'咖啡豆',d(x,c,c2){x.fillStyle=c;ell(x,0,0,5.6,7.6);x.fill();x.strokeStyle=c2;x.lineWidth=1.3;x.beginPath();x.moveTo(0,-6.6);x.bezierCurveTo(-2.6,-2,2.6,2,0,6.6);x.stroke()}},
+  cup:{n:'咖啡杯',d(x,c,c2){x.fillStyle=c;x.fill(P2('M-7,-2H6V3C6,7 3,9 -.5,9C-4,9 -7,7 -7,3Z'));x.strokeStyle=c;x.lineWidth=1.6;x.beginPath();x.arc(6.6,2,2.6,-Math.PI/2,Math.PI/2);x.stroke();x.strokeStyle=c2;x.lineWidth=1.3;x.lineCap='round';x.stroke(P2('M-3,-4.5C-4.5,-6.5 -1.5,-7.5 -3,-10M1.5,-4.5C0,-6.5 3,-7.5 1.5,-10'))}},
+  dango:{n:'糰子',d(x,c,c2){x.strokeStyle='#B08A5A';x.lineWidth=1.4;x.lineCap='round';x.beginPath();x.moveTo(0,13);x.lineTo(0,-12);x.stroke();[[c,-6.6],['#FFFDF5',0],[c2,6.6]].forEach(([co,y])=>{x.fillStyle=co;circ(x,0,y,3.5);x.fill();x.strokeStyle='rgba(60,40,30,.22)';x.lineWidth=.6;x.stroke()})}},
+  onigiri:{n:'飯糰',d(x,c){const p=P2('M0,-9C2,-9 9,3 9,5.5C9,8 7,9 0,9C-7,9 -9,8 -9,5.5C-9,3 -2,-9 0,-9Z');x.fillStyle='#FFFDF8';x.fill(p);x.strokeStyle='rgba(60,40,30,.35)';x.lineWidth=.9;x.stroke(p);x.fillStyle='#2F3A2E';x.fillRect(-3.6,2.4,7.2,6.6);x.fillStyle=c;circ(x,-4.6,3.2,1);x.fill();circ(x,4.6,3.2,1);x.fill()}},
+  wave:{n:'浪花',d(x,c){x.strokeStyle=c;x.lineWidth=1.8;x.lineCap='round';x.stroke(P2('M-12,4Q-6,-8 0,4Q6,-8 12,4M-8.4,4Q-6,-1.5 -3.6,4M3.6,4Q6,-1.5 8.4,4'))}},
+  shell:{n:'貝殼',d(x,c,c2){x.fillStyle=c;x.fill(P2('M0,8L-9,-1C-8.5,-8.5 8.5,-8.5 9,-1Z'));x.strokeStyle=c2;x.lineWidth=.9;x.beginPath();for(const t of[-6,-3,0,3,6]){x.moveTo(0,7.5);x.lineTo(t,-6.5)}x.stroke();x.fillStyle=c;x.fillRect(-2.6,7,5.2,2.6)}},
+  cloud:{n:'祥雲',d(x,c,c2){const p=P2('M-12,5C-14,1 -10,-3 -6,-1C-6,-6 1,-8 3,-3C6,-6 12,-3 10,2C13,3 12,6 9,6H-10C-11.5,6 -12,5.5 -12,5Z');x.fillStyle=c;x.fill(p);x.strokeStyle=c2;x.lineWidth=1.1;x.beginPath();x.arc(-3.8,2,2.6,0,4.7);x.stroke();x.beginPath();x.arc(4,1.6,2,3.1,7.6);x.stroke()}},
+  chidori:{n:'千鳥',d(x,c){x.fillStyle=c;x.fill(P2('M-10,3C-7,-3 -2,-6 3,-5C5,-8 9,-8 11,-5C8,-5 7.5,-3 8,-1C9,2 7,6 2,7C-2,7.5 -6,6 -10,3Z'));x.fillStyle='#fff';circ(x,6.2,-5,.8);x.fill()}},
+  mtfuji:{n:'富士山',d(x,c){x.fillStyle=c;x.fill(P2('M-12,8L-4,-6C-2,-8 2,-8 4,-6L12,8Z'));x.fillStyle='#fff';x.fill(P2('M-4,-6C-2,-8 2,-8 4,-6L6.3,-2.2L4,-3.4L2,-1.4L0,-3.4L-2,-1.4L-4,-3.4L-6.3,-2.2Z'))}},
+  torii:{n:'鳥居',d(x,c,c2){x.fillStyle=c2;x.fill(P2('M-12,-8Q0,-10.6 12,-8L11.5,-5.8H-11.5Z'));x.fillStyle=c;x.fillRect(-9.5,-3.6,19,2);x.fillRect(-7.4,-6,2.4,15);x.fillRect(5,-6,2.4,15);x.fillRect(-.9,-6,1.8,2.6)}},
+  lantern:{n:'燈籠',d(x,c,c2){x.fillStyle=c;x.beginPath();x.roundRect?x.roundRect(-6,-8,12,16,6):x.rect(-6,-8,12,16);x.fill();x.strokeStyle=c2;x.lineWidth=.8;for(let i=-1;i<=1;i++){x.beginPath();x.ellipse(0,i*4,6,1.2,0,0,Math.PI);x.stroke()}x.fillStyle='#2b2626';x.fillRect(-3.4,-10,6.8,2.4);x.fillRect(-3.4,7.6,6.8,2.4);x.strokeStyle='#2b2626';x.beginPath();x.moveTo(0,10);x.lineTo(0,13);x.stroke()}},
+  steam:{n:'溫泉',d(x,c){x.strokeStyle=c;x.lineWidth=1.7;x.lineCap='round';x.stroke(P2('M-9,2C-9,9 9,9 9,2M-4,-.5C-6,-3 -2,-5.5 -4,-9M0,-.5C-2,-3 2,-5.5 0,-9M4,-.5C2,-3 6,-5.5 4,-9'))}},
+  star:{n:'星星',d(x,c){x.fillStyle=c;const pts=[];for(let i=0;i<10;i++){const r=i%2?4.2:10,a=i*Math.PI/5;pts.push([Math.sin(a)*r,-Math.cos(a)*r])}poly(x,pts);x.fill()}},
+  sparkle:{n:'閃閃',d(x,c){x.fillStyle=c;x.fill(P2('M0,-10Q1.2,-1.2 10,0Q1.2,1.2 0,10Q-1.2,1.2 -10,0Q-1.2,-1.2 0,-10Z'))}},
+  moon:{n:'月亮',d(x,c){x.fillStyle=c;x.beginPath();x.arc(0,0,9,.442,4.554,false);x.arc(4,-3,8,3.969,1.027,true);x.closePath();x.fill()}},
+  heart:{n:'心心',d(x,c){x.fillStyle=c;x.fill(P2('M0,9C-14,0 -9,-11 -2.5,-7.5Q-.8,-6.5 0,-4.5Q.8,-6.5 2.5,-7.5C9,-11 14,0 0,9Z'))}},
+  paw:{n:'貓掌',d(x,c){x.fillStyle=c;ell(x,0,3.6,5.6,4.6);x.fill();for(const[cx,cy,r]of[[-6.6,-2.4,2.4],[-2.4,-6.6,2.5],[2.4,-6.6,2.5],[6.6,-2.4,2.4]]){circ(x,cx,cy,r);x.fill()}}},
+  balloon:{n:'氣球',d(x,c,c2){x.fillStyle=c;ell(x,0,-3,6.5,8);x.fill();poly(x,[[-1.3,5.6],[1.3,5.6],[0,4.2]]);x.fill();x.strokeStyle=c2;x.lineWidth=.8;x.beginPath();x.moveTo(0,5.6);x.bezierCurveTo(2,8,-2,10,0,13);x.stroke();x.fillStyle='rgba(255,255,255,.5)';ell(x,-2.6,-6,1.3,2.3,.4);x.fill()}},
+  confetti:{n:'彩紙',d(x,c,c2){[[-7,-5,1,c],[5,-7,0,c2],[-2,1,1,c2],[7,4,0,c],[-6,7,0,c],[3,9,1,c2],[9,-2,1,c],[-10,1,0,c2]].forEach(([px,py,sq,co],i)=>{x.fillStyle=co;if(sq){x.save();x.translate(px,py);x.rotate(i);x.fillRect(-1.4,-2.4,2.8,4.8);x.restore()}else{circ(x,px,py,1.6);x.fill()}})}},
+  airplane:{n:'飛機',d(x,c){x.fillStyle=c;x.fill(P2('M0,-10C1.2,-10 1.6,-8.5 1.6,-7V-2L10,3V5.2L1.6,2.6V7L4,9V10.5L0,9.5L-4,10.5V9L-1.6,7V2.6L-10,5.2V3L-1.6,-2V-7C-1.6,-8.5 -1.2,-10 0,-10Z'))}},
+  camera:{n:'相機',d(x,c,c2){x.fillStyle=c;x.beginPath();x.roundRect?x.roundRect(-10,-5,20,14,3):x.rect(-10,-5,20,14);x.fill();x.fillRect(-4,-8,7,3.5);x.fillStyle=c2;circ(x,0,2,4.6);x.fill();x.fillStyle=c;circ(x,0,2,2.5);x.fill();x.fillStyle='rgba(255,255,255,.8)';x.fillRect(5.5,-3,2.5,1.6)}}
+};
+
+/* 和柄花紋（每款係一塊可以無限重複嘅 tile） */
+function tileCv(w,hh){const c=document.createElement('canvas');c.width=Math.max(2,Math.round(w));c.height=Math.max(2,Math.round(hh));return[c,c.getContext('2d')]}
+const PATTERNS={
+  none:{n:'無'},
+  seigaiha:{n:'青海波',t(s,c,bg){const R=s,[cv,x]=tileCv(2*R,R);x.lineWidth=Math.max(1,R/12);for(let j=-2;j<=4;j++)for(let i=-1;i<=2;i++){const cx=i*2*R+(j&1?R:0),cy=j*R/2;x.fillStyle=bg;circ(x,cx,cy,R*.98);x.fill();x.strokeStyle=c;for(const k of[.95,.72,.5,.28]){circ(x,cx,cy,R*k);x.stroke()}}return cv}},
+  asanoha:{n:'麻之葉',t(s,c){const a=s*2,ht=a*Math.sqrt(3)/2,[cv,x]=tileCv(a,2*ht);x.strokeStyle=c;x.lineWidth=Math.max(1,s/16);const tri=(A,B,C)=>{const g=[(A[0]+B[0]+C[0])/3,(A[1]+B[1]+C[1])/3];x.beginPath();x.moveTo(A[0],A[1]);x.lineTo(B[0],B[1]);x.lineTo(C[0],C[1]);x.closePath();for(const P of[A,B,C]){x.moveTo(g[0],g[1]);x.lineTo(P[0],P[1])}x.stroke()};for(let j=-1;j<=2;j++){const y0=j*ht,y1=y0+ht,o0=(j&1)?a/2:0,o1=((j+1)&1)?a/2:0;for(let i=-2;i<=2;i++){const tx=o0+i*a;tri([tx,y0],[tx+a,y0],[tx+a/2,y1]);const bx=o1+i*a;tri([bx,y1],[bx+a,y1],[bx+a/2,y0])}}return cv}},
+  ichimatsu:{n:'市松格',t(s,c){const[cv,x]=tileCv(2*s,2*s);x.fillStyle=c;x.fillRect(0,0,s,s);x.fillRect(s,s,s,s);return cv}},
+  shippo:{n:'七寶',t(s,c){const[cv,x]=tileCv(2*s,2*s);x.strokeStyle=c;x.lineWidth=Math.max(1,s/12);for(const[cx,cy]of[[0,0],[2*s,0],[0,2*s],[2*s,2*s],[s,s]]){circ(x,cx,cy,s);x.stroke()}return cv}},
+  yagasuri:{n:'矢絣',t(s,c){const[cv,x]=tileCv(2*s,2*s);x.fillStyle=c;for(let k=-1;k<=1;k++){const y=k*2*s;poly(x,[[0,y],[s,y+.5*s],[s,y+1.5*s],[0,y+s]]);x.fill();poly(x,[[2*s,y+s],[s,y+1.5*s],[s,y+2.5*s],[2*s,y+2*s]]);x.fill()}return cv}},
+  uroko:{n:'鱗紋',t(s,c){const th=s*.9,[cv,x]=tileCv(2*s,2*th);x.fillStyle=c;poly(x,[[0,th],[s,0],[2*s,th]]);x.fill();poly(x,[[-s,2*th],[0,th],[s,2*th]]);x.fill();poly(x,[[s,2*th],[2*s,th],[3*s,2*th]]);x.fill();return cv}},
+  kikko:{n:'龜甲',t(s,c){const r3=Math.sqrt(3),[cv,x]=tileCv(3*s,r3*s);x.strokeStyle=c;x.lineWidth=Math.max(1,s/14);const hex=(cx,cy,r)=>{poly(x,[0,1,2,3,4,5].map(i=>[cx+r*Math.cos(i*Math.PI/3),cy+r*Math.sin(i*Math.PI/3)]));x.stroke()};for(const[cx,cy]of[[0,0],[3*s,0],[0,r3*s],[3*s,r3*s],[1.5*s,r3*s/2],[1.5*s,-r3*s/2],[1.5*s,1.5*r3*s]]){hex(cx,cy,s*.93);hex(cx,cy,s*.68)}return cv}},
+  hishi:{n:'菱紋',t(s,c){const[cv,x]=tileCv(2*s,2*s);x.strokeStyle=c;x.fillStyle=c;x.lineWidth=Math.max(1,s/12);poly(x,[[s,0],[2*s,s],[s,2*s],[0,s]]);x.stroke();poly(x,[[s,s*.6],[s*1.4,s],[s,s*1.4],[s*.6,s]]);x.fill();return cv}},
+  nami:{n:'波紋',t(s,c){const[cv,x]=tileCv(2*s,s);x.strokeStyle=c;x.lineWidth=Math.max(1,s/8);x.beginPath();x.moveTo(0,s/2);x.quadraticCurveTo(s/2,0,s,s/2);x.quadraticCurveTo(1.5*s,s,2*s,s/2);x.stroke();return cv}},
+  tatewaku:{n:'立涌',t(s,c){const[cv,x]=tileCv(2*s,2*s);x.strokeStyle=c;x.lineWidth=Math.max(1,s/10);for(const side of[1,-1]){x.beginPath();for(let k=0;k<=40;k++){const y=k/40*2*s;const xx=s+side*(s*.3+s*.42*Math.sin(y/(2*s)*Math.PI*2));k?x.lineTo(xx,y):x.moveTo(xx,y)}x.stroke()}return cv}},
+  polka:{n:'波點',t(s,c){const[cv,x]=tileCv(2*s,2*s);x.fillStyle=c;circ(x,s/2,s/2,s*.22);x.fill();circ(x,1.5*s,1.5*s,s*.22);x.fill();return cv}},
+  gingham:{n:'格紋',t(s,c){const[cv,x]=tileCv(2*s,2*s);x.fillStyle=rgba(c,.45);x.fillRect(0,0,s,2*s);x.fillRect(0,0,2*s,s);return cv}},
+  stripe:{n:'間條',t(s,c){const[cv,x]=tileCv(2*s,2*s);x.fillStyle=c;x.fillRect(0,0,s,2*s);return cv}}
+};
+const PAT_POS={none:'唔要',band:'底部花邊',corner:'對角',border:'外框',side:'左邊直條',full:'滿版淡紋'};
+
+/* 背景紙 */
+const PAPERS={plain:{n:'淨色'},washi:{n:'和紙'},kraft:{n:'牛皮紙'},grid:{n:'方格'},dots:{n:'點格'},lines:{n:'橫線'}};
+/* 紙膠帶 */
+const WASHI={none:{n:'唔要'},solid:{n:'淨色'},stripe:{n:'斜紋'},dots:{n:'波點'},check:{n:'格仔'},motif:{n:'小圖案'}};
+/* 相框 */
+const FRAMES={polaroid:{n:'拍立得'},round:{n:'圓角'},film:{n:'菲林'},thin:{n:'幼線框'},stamp:{n:'郵票'},ticket:{n:'車票'},arch:{n:'拱窗'},torn:{n:'手撕紙'},circle:{n:'圓形'},plain:{n:'無框'}};
+/* 貼紙／印章 */
+const STICKERS={hanko:{n:'印章'},postmark:{n:'郵戳'},date:{n:'日期章'},ticket:{n:'車票仔'},label:{n:'吊牌'},airmail:{n:'航空郵件'},heart:{n:'心心章'},starbadge:{n:'星星章'}};
+/* 排版風格 */
+const LAYSTYLE={scatter:{n:'拼貼散落'},neat:{n:'整齊格仔'},mag:{n:'雜誌風'}};
+/* 頁面比例 */
+const SIZES={'4x5':{n:'4:5（IG）',r:[4,5]},'3x4':{n:'3:4',r:[3,4]},'1x1':{n:'1:1',r:[1,1]},'9x16':{n:'9:16（限動）',r:[9,16]}};
+
+/* 主題（情景）：每個 = 一條配方 */
+const SCENES={
+  sakura:{n:'櫻花季',jp:'さくら日和',ch:'春',kw:['櫻','桜','sakura','花見','春'],c:['#FBF0F2','#E48FA9','#F2B8C6','#6A3646'],m:['sakura','petal'],den:55,pat:'none',pp:'none',paper:'washi',fr:'polaroid',wa:'stripe',st:['hanko','postmark'],tf:'zenmaru',cf:'wenkai',lay:'scatter'},
+  kyoto:{n:'京都和風',jp:'古都の記憶',ch:'京',kw:['京都','和風','神社','寺','金閣','清水','古都','祇園','舞妓','和服','鳥居'],c:['#F2EADB','#B4382B','#2F4A6D','#3A281E'],m:['cloud','chidori'],den:30,pat:'seigaiha',pp:'band',paper:'washi',fr:'thin',wa:'solid',st:['hanko'],tf:'shippori',cf:'wenkai',lay:'neat'},
+  snow:{n:'北國雪景',jp:'雪の便り',ch:'雪',kw:['雪','北海道','冬','札幌','滑雪','小樽','白川'],c:['#EDF2F7','#6F90B8','#B8CCE4','#24364D'],m:['snow','sparkle'],den:50,pat:'none',pp:'none',paper:'dots',fr:'round',wa:'dots',st:['postmark'],tf:'zenmaru',cf:'wenkai',lay:'scatter'},
+  matsuri:{n:'夏祭花火',jp:'夏祭りの夜',ch:'祭',kw:['花火','煙花','祭','浴衣','夏夜','夜市'],c:['#1E2140','#F2B64A','#F28CB0','#F5EAD6'],dark:1,m:['firework','lantern'],den:45,pat:'asanoha',pp:'corner',paper:'plain',fr:'polaroid',wa:'stripe',st:['hanko'],tf:'zenmaru',cf:'wenkai',lay:'scatter'},
+  autumn:{n:'紅葉狩',jp:'紅葉狩り',ch:'秋',kw:['紅葉','楓','秋','銀杏'],c:['#F5ECDF','#C9552C','#D9A932','#47291A'],m:['maple','ginkgo'],den:50,pat:'yagasuri',pp:'side',paper:'kraft',fr:'polaroid',wa:'check',st:['date'],tf:'shippori',cf:'klee',lay:'scatter'},
+  cafe:{n:'喫茶散步',jp:'珈琲と散歩',ch:'珈',kw:['咖啡','cafe','café','coffee','文青','喫茶','甜品','下午茶'],c:['#F3F0EA','#8C7056','#C9B596','#362D26'],m:['bean','cup'],den:28,pat:'none',pp:'none',paper:'grid',fr:'thin',wa:'solid',st:['label'],tf:'klee',cf:'klee',lay:'neat'},
+  ocean:{n:'海島藍',jp:'海の色',ch:'海',kw:['海','沖繩','沖縄','沙灘','海灘','石垣','宮古','潛水','島'],c:['#E8F4F3','#2B9894','#F2C46B','#1B3940'],m:['wave','shell'],den:40,pat:'nami',pp:'band',paper:'plain',fr:'round',wa:'stripe',st:['ticket'],tf:'zenmaru',cf:'wenkai',lay:'scatter'},
+  ajisai:{n:'紫陽花梅雨',jp:'紫陽花の頃',ch:'雨',kw:['紫陽花','繡球','梅雨','雨','鎌倉','六月'],c:['#EEF0F8','#7A82C9','#B69ED8','#2E3256'],m:['hydrangea','raindrop'],den:45,pat:'shippo',pp:'corner',paper:'lines',fr:'arch',wa:'dots',st:['postmark'],tf:'kaisei',cf:'wenkai',lay:'neat'},
+  onsen:{n:'溫泉旅館',jp:'ゆけむり紀行',ch:'湯',kw:['溫泉','温泉','旅館','箱根','別府','由布院','草津','湯'],c:['#F4EEE6','#A8553C','#6F8C7B','#3B2B22'],m:['steam','cloud'],den:30,pat:'kikko',pp:'band',paper:'washi',fr:'stamp',wa:'solid',st:['hanko','ticket'],tf:'shippori',cf:'wenkai',lay:'neat'},
+  fuji:{n:'富士山',jp:'富士を望む',ch:'富',kw:['富士','河口湖','登山','山'],c:['#EEF4F8','#3E6FA8','#E9A3B4','#22344E'],m:['mtfuji','cloud'],den:35,pat:'seigaiha',pp:'corner',paper:'plain',fr:'polaroid',wa:'stripe',st:['postmark','airmail'],tf:'zenmaru',cf:'wenkai',lay:'scatter'},
+  neon:{n:'東京夜景',jp:'ネオンの街',ch:'夜',kw:['東京','夜景','霓虹','新宿','澀谷','涉谷','城市','都市','秋葉原','cyber'],c:['#15152B','#FF5FA2','#38D9E8','#F2F2FF'],dark:1,m:['sparkle','star'],den:32,pat:'hishi',pp:'border',paper:'grid',fr:'plain',wa:'none',st:['ticket'],tf:'dela',cf:'dot',lay:'mag'},
+  food:{n:'美食之旅',jp:'いただきます',ch:'食',kw:['美食','拉麵','壽司','食','大阪','道頓堀','燒肉','甜點','和菓子'],c:['#FFF6E8','#E2873A','#D9534F','#4A2C14'],m:['dango','onigiri'],den:35,pat:'gingham',pp:'corner',paper:'dots',fr:'round',wa:'check',st:['label','date'],tf:'mochiy',cf:'wenkai',lay:'scatter'},
+  animal:{n:'動物朋友',jp:'もふもふ日記',ch:'鹿',kw:['鹿','奈良','貓','狗','動物','兔','水族館','企鵝','熊'],c:['#F7F1E6','#B07A4C','#E8A0A0','#3E2C1E'],m:['paw','heart'],den:40,pat:'polka',pp:'corner',paper:'plain',fr:'polaroid',wa:'dots',st:['heart','label'],tf:'hachi',cf:'wenkai',lay:'scatter'},
+  park:{n:'夢幻樂園',jp:'ゆめの国',ch:'夢',kw:['迪士尼','disney','環球','usj','樂園','遊樂園','城堡'],c:['#FFF4F8','#F06B9A','#5BB8E8','#3A2A55'],m:['balloon','confetti','star'],den:55,pat:'stripe',pp:'band',paper:'dots',fr:'round',wa:'dots',st:['ticket','starbadge'],tf:'mochiy',cf:'hachi',lay:'scatter'},
+  lavender:{n:'薰衣草花田',jp:'ラベンダー畑',ch:'花',kw:['薰衣草','富良野','花田','美瑛','花海'],c:['#F3F0F9','#8D78C4','#8FB572','#322A4A'],m:['lavender','butterfly'],den:40,pat:'none',pp:'none',paper:'washi',fr:'arch',wa:'stripe',st:['postmark'],tf:'kaisei',cf:'wenkai',lay:'neat'},
+  starry:{n:'星空之夜',jp:'星降る夜',ch:'星',kw:['星空','星','銀河','宇宙','月','流星'],c:['#101A33','#F5D77A','#8FA8FF','#EEF1FF'],dark:1,m:['star','moon','sparkle'],den:55,pat:'none',pp:'none',paper:'plain',fr:'polaroid',wa:'solid',st:['postmark'],tf:'kaisei',cf:'wenkai',lay:'scatter'},
+  bamboo:{n:'竹林小徑',jp:'竹林の小径',ch:'竹',kw:['竹','嵐山','森林','自然','綠意','山林'],c:['#EEF3E6','#4F7A3A','#A7C27B','#26361C'],m:['bamboo','leaf'],den:35,pat:'asanoha',pp:'band',paper:'washi',fr:'thin',wa:'solid',st:['hanko'],tf:'shippori',cf:'wenkai',lay:'neat'},
+  newyear:{n:'新春初詣',jp:'初詣',ch:'福',kw:['新年','初詣','過年','元旦','正月','福','新春'],c:['#FBF3E4','#C8302F','#C9A13B','#3B1E14'],m:['plum','cloud'],den:35,pat:'ichimatsu',pp:'border',paper:'washi',fr:'stamp',wa:'solid',st:['hanko'],tf:'kurenaido',cf:'wenkai',lay:'neat'},
+  summer:{n:'向日葵夏日',jp:'なつやすみ',ch:'夏',kw:['向日葵','暑假','夏天','夏日','陽光','夏'],c:['#FFF8E1','#E8A317','#4E9BD8','#3D3215'],m:['sunflower','sparkle'],den:40,pat:'gingham',pp:'band',paper:'plain',fr:'polaroid',wa:'check',st:['label'],tf:'hachi',cf:'wenkai',lay:'scatter'},
+  journey:{n:'旅行手帳',jp:'旅の記録',ch:'旅',kw:['旅行','旅遊','手帳','機場','飛機','行李','護照'],c:['#F6F1E7','#C0603F','#3F6E8C','#33291F'],m:['airplane','camera'],den:28,pat:'none',pp:'none',paper:'grid',fr:'torn',wa:'check',st:['airmail','postmark'],tf:'klee',cf:'wenkai',lay:'scatter'}
+};
+function sceneRecipe(id){
+  const S=SCENES[id]||SCENES.sakura;
+  return{scene:SCENES[id]?id:'sakura',name:S.n,jp:S.jp,ch:S.ch,colors:{bg:S.c[0],ac:S.c[1],ac2:S.c[2],ink:S.c[3]},dark:!!S.dark,
+    motifs:S.m.slice(),density:S.den,decoScale:1,pattern:S.pat,patPos:S.pp,paper:S.paper,frame:S.fr,washi:S.wa,stickers:S.st.slice(),
+    titleFont:S.tf,capFont:S.cf,filter:'none',layout:S.lay,caps:true,photoColors:false,request:''};
+}
+
+/* 風格（疊加喺主題上面） */
+const STYLES=[
+  {id:'cute',n:'可愛',kw:['可愛','卡哇伊','少女','甜美','kawaii','萌'],set:{frame:'round',titleFont:'hachi',washi:'dots',layout:'scatter',stickers:['heart','label']},den:10},
+  {id:'retro',n:'復古菲林',kw:['復古','菲林','懷舊','film','昭和','底片','vintage','古著'],set:{frame:'film',filter:'film',paper:'kraft',titleFont:'shippori',layout:'neat',stickers:['postmark','date']}},
+  {id:'minimal',n:'簡約',kw:['簡約','極簡','簡單','乾淨','minimal','清爽','留白'],set:{frame:'thin',pattern:'none',patPos:'none',paper:'plain',washi:'none',layout:'neat',stickers:[]},denSet:12},
+  {id:'mag',n:'雜誌風',kw:['雜誌','magazine','時尚','型格','editorial'],set:{layout:'mag',frame:'plain',titleFont:'dela',washi:'none',stickers:['date']},denSet:12},
+  {id:'journal',n:'手帳拼貼',kw:['手帳','日記','筆記','scrapbook','拼貼','剪貼'],set:{paper:'grid',frame:'torn',washi:'check',capFont:'wenkai',layout:'scatter',stickers:['ticket','postmark']}},
+  {id:'elegant',n:'優雅',kw:['優雅','高級','典雅','文藝','浪漫','氣質'],set:{frame:'arch',titleFont:'kaisei',patPos:'corner',washi:'none',layout:'neat'},denSet:30},
+  {id:'pop',n:'繽紛 POP',kw:['普普','活潑','繽紛','pop','色彩','熱鬧'],set:{filter:'vivid',titleFont:'mochiy',frame:'stamp',washi:'stripe',stickers:['label','starbadge']},den:15},
+  {id:'postcard',n:'明信片',kw:['明信片','郵票','postcard','寄信'],set:{frame:'stamp',stickers:['airmail','postmark'],washi:'solid'}}
+];
+const COLOR_WORDS=[['酒紅','#8E2A3A'],['粉紅','#E48FA9'],['桃紅','#E8628A'],['天藍','#6FB3E0'],['海軍藍','#2B3F6B'],['寶藍','#2F5BB7'],['湖水綠','#4DB3A6'],['薄荷','#6CC3A8'],['抹茶','#8AA05A'],['橄欖','#7D8B4A'],['奶茶','#B89A7C'],['焦糖','#B9773E'],['芥末','#C9A227'],['檸檬','#E5C84A'],['珊瑚','#EE7F6B'],['杏色','#EFB98C'],['粉','#E48FA9'],['紅','#C8443A'],['橙','#E2873A'],['黃','#D9A932'],['金','#C9A13B'],['綠','#5E9A68'],['藍','#4C82C3'],['紫','#8B76C0'],['啡','#9A7658'],['棕','#9A7658'],['米','#C9B596'],['灰','#8A8F98'],['銀','#9AA3AD']];
+const MOTIF_WORDS={'貓':'paw','狗':'paw','愛心':'heart','心心':'heart','星':'star','閃':'sparkle','氣球':'balloon','飛機':'airplane','相機':'camera','蝴蝶':'butterfly','糰子':'dango','團子':'dango','飯糰':'onigiri','雲':'cloud','月':'moon','燈籠':'lantern','鳥居':'torii','楓':'maple','銀杏':'ginkgo','梅花':'plum','櫻':'sakura','雪':'snow','貝殼':'shell','浪':'wave','咖啡':'bean','向日葵':'sunflower','竹':'bamboo','雨':'raindrop','鳥':'chidori','彩紙':'confetti','薰衣草':'lavender','葉':'leaf','富士':'mtfuji','花火':'firework','煙花':'firework','繡球':'hydrangea','紫陽花':'hydrangea','溫泉':'steam'};
+const PATTERN_WORDS={'青海波':'seigaiha','麻之葉':'asanoha','麻葉':'asanoha','市松':'ichimatsu','格仔':'gingham','格紋':'gingham','波點':'polka','水玉':'polka','間條':'stripe','條紋':'stripe','龜甲':'kikko','七寶':'shippo','矢絣':'yagasuri','鱗':'uroko','菱':'hishi','波紋':'nami','立涌':'tatewaku'};
+const FRAME_WORDS={'拍立得':'polaroid','即影即有':'polaroid','菲林':'film','郵票':'stamp','車票':'ticket','戲飛':'ticket','手撕':'torn','拱':'arch','圓形':'circle','圓角':'round','無框':'plain','幼框':'thin'};
+const FONT_WORDS={'毛筆':'kurenaido','書法':'kurenaido','像素':'dot','電玩':'dot','明朝':'shippori','圓體':'zenmaru','鉛筆':'klee','塗鴉':'yomogi'};
+const FILTER_WORDS={'黑白':'mono','懷舊色':'sepia','褪色':'fade','冷調':'cool','暖調':'film','鮮豔':'vivid','粉嫩':'soft'};
+
+/* ══════════════ 畫頁引擎（全部用 Canvas 畫，預覽同匯出一模一樣） ══════════════ */
+let NOISE=null;
+function noiseTile(){
+  if(NOISE)return NOISE;
+  const[c,x]=tileCv(160,160);const id=x.createImageData(160,160),d=id.data,r=rng(7);
+  for(let i=0;i<d.length;i+=4){const v=r()*255;d[i]=d[i+1]=d[i+2]=v;d[i+3]=r()*70}
+  x.putImageData(id,0,0);return NOISE=c;
+}
+function rrect(x,X,Y,w,hh,r){
+  r=Math.max(0,Math.min(r,w/2,hh/2));x.beginPath();
+  x.moveTo(X+r,Y);x.arcTo(X+w,Y,X+w,Y+hh,r);x.arcTo(X+w,Y+hh,X,Y+hh,r);x.arcTo(X,Y+hh,X,Y,r);x.arcTo(X,Y,X+w,Y,r);x.closePath();
+}
+function shadowOn(x,th,u,k=1){x.shadowColor=th.dark?'rgba(0,0,0,.5)':'rgba(60,40,25,.22)';x.shadowBlur=u*1.4*k;x.shadowOffsetY=u*.45*k}
+function shadowOff(x){x.shadowColor='transparent';x.shadowBlur=0;x.shadowOffsetY=0}
+function fitText(x,t,maxW){
+  t=String(t||'');if(x.measureText(t).width<=maxW)return t;
+  while(t.length>1&&x.measureText(t+'…').width>maxW)t=t.slice(0,-1);return t+'…';
+}
+function wrapText(x,t,maxW,maxLines){
+  const toks=String(t||'').replace(/\r/g,'').match(/\n|[⺀-鿿　-〿＀-￯]|[^\s⺀-鿿　-〿＀-￯]+\s*|[ \t]+/g)||[];
+  const out=[];let line='';
+  for(const tk of toks){
+    if(tk==='\n'){out.push(line);line='';continue}
+    const test=line+tk;
+    if(x.measureText(test.trimEnd()).width>maxW&&line.trim()){out.push(line.trimEnd());line=tk.trimStart()}else line=test;
+  }
+  if(line.trim())out.push(line.trimEnd());
+  if(out.length>maxLines){const k=out.slice(0,maxLines);k[maxLines-1]=fitText(x,k[maxLines-1]+'……',maxW);return k}
+  return out;
+}
+function drawPhoto(x,img,X,Y,w,hh,filter,fy=.42){
+  const iw=img.naturalWidth||img.width,ih=img.naturalHeight||img.height;if(!iw||!ih||w<1||hh<1)return;
+  const s=Math.max(w/iw,hh/ih),sw=w/s,sh=hh/s,sx=(iw-sw)/2,sy=clamp((ih-sh)*fy,0,ih-sh);
+  if(!filter||filter==='none'){x.drawImage(img,sx,sy,sw,sh,X,Y,w,hh);return}
+  const W=Math.max(1,Math.round(w)),H=Math.max(1,Math.round(hh));
+  const c=document.createElement('canvas');c.width=W;c.height=H;const t=c.getContext('2d',{willReadFrequently:true});
+  t.drawImage(img,sx,sy,sw,sh,0,0,W,H);const id=t.getImageData(0,0,W,H);filterPixels(id.data,filter);t.putImageData(id,0,0);
+  x.drawImage(c,X,Y,w,hh);c.width=c.height=0;
+}
+function drawMotif(x,id,cx,cy,size,rot,c,c2,alpha){
+  const M=MOTIFS[id];if(!M)return;
+  x.save();x.translate(cx,cy);x.rotate(rot||0);const k=size/20;x.scale(k,k);x.globalAlpha=alpha==null?1:alpha;
+  try{M.d(x,c,c2||c)}catch(e){}x.restore();
+}
+/* 背景紙 */
+function drawPaper(x,th,W,H,R){
+  const C=th.colors,ink=C.ink,u=W/100;
+  let bg=C.bg;if(th.paper==='kraft'&&!th.dark)bg=mix(C.bg,'#C9A57A',.42);
+  x.fillStyle=bg;x.fillRect(0,0,W,H);x.save();
+  switch(th.paper){
+    case'grid':{const s=W/22;x.strokeStyle=rgba(ink,th.dark?.13:.075);x.lineWidth=Math.max(1,u*.12);x.beginPath();for(let v=s;v<W;v+=s){x.moveTo(v,0);x.lineTo(v,H)}for(let v=s;v<H;v+=s){x.moveTo(0,v);x.lineTo(W,v)}x.stroke();break}
+    case'dots':{const s=W/22;x.fillStyle=rgba(ink,th.dark?.25:.16);for(let a=s;a<W;a+=s)for(let b=s;b<H;b+=s){circ(x,a,b,Math.max(.8,u*.22));x.fill()}break}
+    case'lines':{const s=W/16;x.strokeStyle=rgba(ink,th.dark?.15:.09);x.lineWidth=Math.max(1,u*.14);x.beginPath();for(let v=s*1.5;v<H;v+=s){x.moveTo(0,v);x.lineTo(W,v)}x.stroke();x.strokeStyle=rgba(C.ac,.35);x.beginPath();x.moveTo(u*4,0);x.lineTo(u*4,H);x.stroke();break}
+    case'washi':{x.lineCap='round';for(let i=0;i<150;i++){const px=R()*W,py=R()*H,l=u*(1.5+R()*5),a=R()*Math.PI;x.strokeStyle=R()<.55?rgba('#ffffff',th.dark?.06:.55):rgba(ink,.05);x.lineWidth=Math.max(.6,u*(.08+R()*.18));x.beginPath();x.moveTo(px,py);x.quadraticCurveTo(px+Math.cos(a)*l*.5+R()*u,py+Math.sin(a)*l*.5,px+Math.cos(a)*l,py+Math.sin(a)*l);x.stroke()}break}
+    case'kraft':{for(let i=0;i<240;i++){x.fillStyle=R()<.5?rgba('#5a3a1a',.07):rgba('#ffffff',.09);circ(x,R()*W,R()*H,Math.max(.5,u*(.1+R()*.35)));x.fill()}break}
+  }
+  x.globalAlpha=th.paper==='kraft'?.55:(th.dark?.2:.28);
+  x.fillStyle=x.createPattern(noiseTile(),'repeat');x.fillRect(0,0,W,H);x.restore();
+}
+/* 和柄花紋擺位 */
+function patInsets(th,W,H){
+  const z={t:0,r:0,b:0,l:0};if(!PATTERNS[th.pattern]||!PATTERNS[th.pattern].t)return z;const u=W/100;
+  if(th.patPos==='band')z.b=H*.085;else if(th.patPos==='border')z.t=z.r=z.b=z.l=u*3.6;else if(th.patPos==='side')z.l=u*8.5;
+  return z;
+}
+function drawPattern(x,th,W,H){
+  const P=PATTERNS[th.pattern];if(!P||!P.t||!th.patPos||th.patPos==='none')return;
+  const C=th.colors,u=W/100,s=Math.max(3,u*(th.patPos==='full'?3.6:2.8)),ins=patInsets(th,W,H),k=W*.26;
+  const tile=P.t(s,th.dark?mix(C.ac,C.bg,.15):C.ac,C.bg);
+  x.save();x.beginPath();
+  switch(th.patPos){
+    case'band':x.rect(0,H-ins.b,W,ins.b);break;
+    case'border':x.rect(0,0,W,H);x.rect(ins.l,ins.t,W-ins.l-ins.r,H-ins.t-ins.b);break;
+    case'side':x.rect(0,0,ins.l,H);break;
+    case'corner':x.moveTo(W,0);x.lineTo(W-k,0);x.lineTo(W,k);x.closePath();x.moveTo(0,H);x.lineTo(k,H);x.lineTo(0,H-k);x.closePath();break;
+    default:x.rect(0,0,W,H);
+  }
+  x.clip(th.patPos==='border'?'evenodd':'nonzero');
+  x.globalAlpha=th.patPos==='full'?(th.dark?.13:.09):(th.dark?.55:.5);
+  x.fillStyle=x.createPattern(tile,'repeat');x.fillRect(0,0,W,H);x.restore();
+  if(th.patPos==='full')return;
+  x.save();x.strokeStyle=rgba(C.ac,.6);x.lineWidth=Math.max(1,u*.25);x.beginPath();
+  switch(th.patPos){
+    case'band':x.moveTo(0,H-ins.b);x.lineTo(W,H-ins.b);break;
+    case'border':x.rect(ins.l,ins.t,W-ins.l-ins.r,H-ins.t-ins.b);break;
+    case'side':x.moveTo(ins.l,0);x.lineTo(ins.l,H);break;
+    case'corner':x.moveTo(W-k,0);x.lineTo(W,k);x.moveTo(k,H);x.lineTo(0,H-k);break;
+  }
+  x.stroke();x.restore();
+}
+/* 紙膠帶 */
+function drawTape(x,th,cx,cy,len,wid,ang,col){
+  x.save();x.translate(cx,cy);x.rotate(ang);
+  const n=5,hw=len/2,hh=wid/2,zz=wid/n,u=wid/10;
+  x.beginPath();x.moveTo(-hw,-hh);x.lineTo(hw,-hh);
+  for(let i=0;i<n;i++)x.lineTo(hw-(i%2?0:zz*.4),-hh+zz*(i+.5));
+  x.lineTo(hw,hh);x.lineTo(-hw,hh);
+  for(let i=n-1;i>=0;i--)x.lineTo(-hw+(i%2?0:zz*.4),-hh+zz*(i+.5));
+  x.closePath();x.fillStyle=rgba(col,.8);x.fill();
+  x.save();x.clip();x.fillStyle='rgba(255,255,255,.42)';
+  switch(th.washi){
+    case'stripe':for(let k=-len-wid;k<len;k+=u*3.4){x.beginPath();x.moveTo(k,-hh);x.lineTo(k+u*1.6,-hh);x.lineTo(k+u*1.6+wid,hh);x.lineTo(k+wid,hh);x.closePath();x.fill()}break;
+    case'dots':{let row=0;for(let b=-hh+u*2;b<hh;b+=u*3.2,row++)for(let a=-hw+(row%2?u*1.7:0);a<hw;a+=u*3.4){circ(x,a,b,u*.85);x.fill()}break}
+    case'check':x.fillStyle='rgba(255,255,255,.3)';for(let a=-hw;a<hw;a+=u*4)x.fillRect(a,-hh,u*2,wid);for(let b=-hh;b<hh;b+=u*4)x.fillRect(-hw,b,len,u*2);break;
+    case'motif':{const m=th.motifs[0]||'star';for(let a=-hw+wid*.6;a<hw;a+=wid*1.15)drawMotif(x,m,a,0,wid*.62,0,'rgba(255,255,255,.85)','rgba(255,255,255,.6)');break}
+  }
+  x.restore();x.restore();
+}
+/* 特別形狀嘅卡（郵票齒邊、車票缺口）：喺另一張 canvas 打窿再貼返上去 */
+function punchedCard(w,hh,color,radius,holes){
+  const[c,x]=tileCv(w,hh);rrect(x,0,0,c.width,c.height,radius||0);x.fillStyle=color;x.fill();
+  x.globalCompositeOperation='destination-out';for(const[a,b,r]of holes){circ(x,a,b,r);x.fill()}return c;
+}
+function stampCard(w,hh,u,color){
+  const r=Math.max(2,u*.7),holes=[];
+  const nx=Math.max(3,Math.round(w/(r*2.7))),ny=Math.max(3,Math.round(hh/(r*2.7)));
+  for(let i=0;i<nx;i++){const a=(i+.5)*w/nx;holes.push([a,0,r],[a,hh,r])}
+  for(let j=0;j<ny;j++){const b=(j+.5)*hh/ny;holes.push([0,b,r],[w,b,r])}
+  return punchedCard(w,hh,color,0,holes);
+}
+function tornPath(x,X,Y,w,hh,u,R){
+  const st=Math.max(2,u*1.2),j=u*.55;x.beginPath();x.moveTo(X,Y);
+  for(let a=X+st;a<X+w;a+=st)x.lineTo(a,Y+(R()-.5)*j);x.lineTo(X+w,Y);
+  for(let b=Y+st;b<Y+hh;b+=st)x.lineTo(X+w+(R()-.5)*j,b);x.lineTo(X+w,Y+hh);
+  for(let a=X+w-st;a>X;a-=st)x.lineTo(a,Y+hh+(R()-.5)*j);x.lineTo(X,Y+hh);
+  for(let b=Y+hh-st;b>Y;b-=st)x.lineTo(X+(R()-.5)*j,b);x.closePath();
+}
+function inkTexture(w,hh,fn,seed){
+  const[c,x]=tileCv(w,hh);fn(x);x.globalCompositeOperation='destination-out';const R=rng(seed||3);
+  const n=Math.min(600,c.width*c.height/170);for(let i=0;i<n;i++){x.globalAlpha=.3+R()*.7;circ(x,R()*c.width,R()*c.height,R()*c.width*.012+.4);x.fill()}
+  return c;
+}
+/* 相框 + 相 + 說明文字 + 紙膠帶 */
+const CAP_INSIDE=['polaroid','torn','ticket'];
+function frameRatio(fr,cap){return fr==='polaroid'||fr==='torn'?.8:fr==='ticket'?.76:fr==='film'?.8:cap?.88:1}
+function drawFramed(x,th,img,s,cap,o){
+  const u=o.u,C=th.colors,fr=th.frame,R=o.R;
+  x.save();x.translate(s.cx,s.cy);x.rotate((s.rot||0)*Math.PI/180);
+  const w=s.w,hh=s.h,X=-w/2,Y=-hh/2;
+  const fs=Math.max(u*2.3,Math.min(u*3.1,w*.075));
+  const capOut=!!cap&&!CAP_INSIDE.includes(fr),capH=capOut?fs*1.9:0,ph=hh-capH;
+  const capIn=(text,cx,cy,maxW,color,align)=>{x.save();shadowOff(x);x.font=fontStr(th.capFont,fs);x.fillStyle=color;x.textAlign=align||'center';x.textBaseline='middle';x.fillText(fitText(x,text,maxW),cx,cy);x.restore()};
+  let tape=null;
+  switch(fr){
+    case'polaroid':{const pad=Math.min(w,hh)*.05,bot=cap?Math.max(pad*3,fs*2.3):pad*2.6;shadowOn(x,th,u);x.fillStyle='#FFFEFB';x.fillRect(X,Y,w,hh);shadowOff(x);drawPhoto(x,img,X+pad,Y+pad,w-2*pad,hh-pad-bot,th.filter);if(cap)capIn(cap,0,Y+hh-bot/2,w-2*pad,'#4A4038');tape=[X,Y,w,hh];break}
+    case'round':{const r=Math.min(w,ph)*.07;shadowOn(x,th,u,.7);rrect(x,X,Y,w,ph,r);x.fillStyle='#fff';x.fill();shadowOff(x);x.save();rrect(x,X,Y,w,ph,r);x.clip();drawPhoto(x,img,X,Y,w,ph,th.filter);x.restore();x.lineWidth=u*.9;x.strokeStyle=th.dark?mix(C.ac,'#000000',.15):mix(C.ac,'#ffffff',.45);rrect(x,X+u*.45,Y+u*.45,w-u*.9,ph-u*.9,r*.92);x.stroke();break}
+    case'film':{const bH=Math.max(u*2.6,ph*.1);shadowOn(x,th,u,.7);x.fillStyle='#1C1917';x.fillRect(X,Y,w,ph);shadowOff(x);drawPhoto(x,img,X+u*1.1,Y+bH,w-u*2.2,ph-2*bH,th.filter);x.fillStyle='rgba(255,250,240,.88)';const hw=u*1.3,hb=bH*.4,n=Math.max(3,Math.floor((w-u*1.6)/(u*3.2)));for(let i=0;i<n;i++){const a=X+u*.8+(i+.5)*(w-u*1.6)/n-hw/2;rrect(x,a,Y+(bH-hb)/2,hw,hb,hw*.25);x.fill();rrect(x,a,Y+ph-bH+(bH-hb)/2,hw,hb,hw*.25);x.fill()}tape=[X,Y,w,ph];break}
+    case'thin':{const pad=Math.min(w,ph)*.035;x.fillStyle=th.dark?'rgba(255,255,255,.06)':'rgba(255,255,255,.55)';x.fillRect(X,Y,w,ph);drawPhoto(x,img,X+pad,Y+pad,w-2*pad,ph-2*pad,th.filter);x.strokeStyle=rgba(C.ink,.55);x.lineWidth=Math.max(1,u*.22);x.strokeRect(X,Y,w,ph);tape=[X,Y,w,ph];break}
+    case'stamp':{const pad=Math.min(w,ph)*.075;shadowOn(x,th,u,.6);x.drawImage(stampCard(w,ph,u,'#FFFEFB'),X,Y,w,ph);shadowOff(x);drawPhoto(x,img,X+pad,Y+pad,w-2*pad,ph-pad*2.5,th.filter);x.save();x.font=fontStr('zenmaru',pad*.62,true);x.fillStyle=C.ac;x.textBaseline='middle';const ty=Y+ph-pad*.95;x.textAlign='left';x.fillText(o.country||'TRAVEL',X+pad,ty);x.textAlign='right';x.fillText(String(o.stampNo||84),X+w-pad,ty);x.restore();tape=[X,Y,w,ph];break}
+    case'ticket':{const stub=cap?Math.max(fs*2.6,hh*.17):hh*.11,pad=Math.min(w,hh)*.045,nr=Math.max(3,u*1.5);shadowOn(x,th,u,.6);x.drawImage(punchedCard(w,hh,'#FFFDF7',u*.8,[[0,hh-stub,nr],[w,hh-stub,nr]]),X,Y,w,hh);shadowOff(x);drawPhoto(x,img,X+pad,Y+pad,w-2*pad,hh-stub-pad*1.6,th.filter);x.save();x.setLineDash([u*.8,u*.7]);x.strokeStyle=rgba('#3a2e28',.35);x.lineWidth=Math.max(1,u*.2);x.beginPath();x.moveTo(X+nr*1.4,Y+hh-stub);x.lineTo(X+w-nr*1.4,Y+hh-stub);x.stroke();x.restore();if(cap)capIn(cap,X+pad+u*.4,Y+hh-stub/2,w*.66,'#4A4038','left');x.save();x.font=fontStr('dot',fs*.8);x.fillStyle=C.ac;x.textAlign='right';x.textBaseline='middle';x.fillText('No.'+String(o.no||1).padStart(3,'0'),X+w-pad,Y+hh-stub/2);x.restore();break}
+    case'arch':{const arch=(ox,oy,ww,hh2)=>{const ry=Math.min(ww/2,hh2*.45);x.beginPath();x.moveTo(ox,oy+hh2);x.lineTo(ox,oy+ry);x.ellipse(ox+ww/2,oy+ry,ww/2,ry,0,Math.PI,Math.PI*2);x.lineTo(ox+ww,oy+hh2);x.closePath()};shadowOn(x,th,u,.6);arch(X,Y,w,ph);x.fillStyle='#FFFEFB';x.fill();shadowOff(x);const pd=u*.9;x.save();arch(X+pd,Y+pd,w-2*pd,ph-2*pd);x.clip();drawPhoto(x,img,X+pd,Y+pd,w-2*pd,ph-2*pd,th.filter);x.restore();x.strokeStyle=rgba(C.ac,.75);x.lineWidth=Math.max(1,u*.25);arch(X-u*.9,Y-u*.9,w+u*1.8,ph+u*1.8);x.stroke();break}
+    case'torn':{const pad=Math.min(w,hh)*.05,bot=cap?Math.max(pad*2.8,fs*2.2):pad*1.6;shadowOn(x,th,u,.6);x.fillStyle='#FFFEF9';tornPath(x,X,Y,w,hh,u,R);x.fill();shadowOff(x);drawPhoto(x,img,X+pad,Y+pad,w-2*pad,hh-pad-bot,th.filter);if(cap)capIn(cap,0,Y+hh-bot/2,w-2*pad,'#4A4038');tape=[X,Y,w,hh];break}
+    case'circle':{const d=Math.min(w,ph),r=d/2,cy=Y+ph/2;shadowOn(x,th,u,.6);circ(x,0,cy,r);x.fillStyle='#fff';x.fill();shadowOff(x);x.save();circ(x,0,cy,r-u*.5);x.clip();drawPhoto(x,img,-r,cy-r,d,d,th.filter,.5);x.restore();x.strokeStyle=rgba(C.ac,.75);x.lineWidth=Math.max(1,u*.35);circ(x,0,cy,r+u*.9);x.stroke();break}
+    default:{shadowOn(x,th,u,.8);x.fillStyle='#fff';x.fillRect(X,Y,w,ph);shadowOff(x);drawPhoto(x,img,X,Y,w,ph,th.filter);tape=[X,Y,w,ph]}
+  }
+  if(capOut){
+    const cy=fr==='circle'?Y+ph/2+Math.min(w,ph)/2+fs*1.15:Y+ph+capH*.55;
+    x.save();x.font=fontStr(th.capFont,fs);x.fillStyle=rgba(C.ink,.9);x.textAlign=fr==='thin'?'left':'center';x.textBaseline='middle';
+    x.fillText(fitText(x,cap,w),fr==='thin'?X:0,cy);x.restore();
+  }
+  if(tape&&th.washi&&th.washi!=='none'){
+    const[bx,by,bw,bh]=tape,tw=clamp(bw*.34,u*9,u*17),tt=u*3.4,col=o.idx%2?C.ac2:C.ac;
+    if(o.tapeVar===1){drawTape(x,th,bx+u*1.4,by+u*1.4,tw*.8,tt,-Math.PI/4,col);drawTape(x,th,bx+bw-u*1.4,by+bh-u*1.4,tw*.8,tt,-Math.PI/4,col)}
+    else if(o.tapeVar===2)drawTape(x,th,bx+bw-u*1.2,by+u*1.2,tw*.8,tt,Math.PI/4,col);
+    else drawTape(x,th,0,by+u*.3,tw,tt,(R()-.5)*.16,col);
+  }
+  x.restore();
+}
+/* 貼紙／印章 */
+function drawSticker(x,th,id,cx,cy,S,rot,info){
+  const C=th.colors;x.save();x.translate(cx,cy);x.rotate(rot||0);
+  switch(id){
+    case'hanko':{const off=inkTexture(S,S,c=>{rrect(c,S*.06,S*.06,S*.88,S*.88,S*.14);c.fillStyle=C.ac;c.fill();c.strokeStyle='#fff';c.lineWidth=S*.035;rrect(c,S*.15,S*.15,S*.7,S*.7,S*.08);c.stroke();c.font=fontStr('kurenaido',S*.5);c.fillStyle='#fff';c.textAlign='center';c.textBaseline='middle';c.fillText(th.ch||'旅',S/2,S*.53)},hash(th.ch));x.globalAlpha=.92;x.drawImage(off,-S/2,-S/2);break}
+    case'postmark':{const r=S*.37,col=th.dark?rgba(C.ink,.75):rgba(C.ink,.6);const off=inkTexture(S*1.9,S,c=>{c.strokeStyle=c.fillStyle=col;c.lineWidth=S*.025;circ(c,S*.5,S*.5,r);c.stroke();circ(c,S*.5,S*.5,r*.8);c.stroke();c.textAlign='center';c.textBaseline='middle';c.font=fontStr('zenmaru',S*.095,true);c.fillText(info.country||'TRAVEL',S*.5,S*.34);c.font=fontStr('dot',S*.11);c.fillText(info.dateShort||'',S*.5,S*.5);c.font=fontStr('zenmaru',S*.085,true);c.fillText(fitText(c,info.place||'旅の記録',r*1.35),S*.5,S*.66);c.lineWidth=S*.03;for(let k=0;k<4;k++){c.beginPath();const yy=S*.32+k*S*.12;for(let t=0;t<=20;t++){const xx=S*.92+t*S*.045,y2=yy+Math.sin(t*.9)*S*.03;t?c.lineTo(xx,y2):c.moveTo(xx,y2)}c.stroke()}},11);x.drawImage(off,-S*.5,-S/2);break}
+    case'date':{const w=S*1.3,hb=S*.42;const off=inkTexture(w,hb,c=>{c.strokeStyle=c.fillStyle=C.ac;c.lineWidth=S*.03;rrect(c,S*.03,S*.03,w-S*.06,hb-S*.06,hb*.3);c.stroke();c.font=fontStr('dot',hb*.42);c.textAlign='center';c.textBaseline='middle';c.fillText(info.dateDots||'MEMORIES',w/2,hb/2+1)},5);x.globalAlpha=.9;x.drawImage(off,-w/2,-hb/2);break}
+    case'ticket':{const w=S*1.3,hb=S*.62,col=mix(C.ac2,'#ffffff',th.dark?.15:.55);shadowOn(x,th,S/14,.5);x.drawImage(punchedCard(w,hb,col,S*.04,[[w*.28,0,S*.05],[w*.28,hb,S*.05]]),-w/2,-hb/2);shadowOff(x);const tc=lum(col)>.45?mix(C.ac2,'#000000',.6):'#ffffff';x.fillStyle=tc;x.textAlign='left';x.textBaseline='middle';x.font=fontStr('dela',hb*.15);x.fillText('TICKET',-w/2+w*.33,-hb*.24);x.font=fontStr(th.capFont,hb*.19);x.fillText(fitText(x,info.place||'旅の記録',w*.6),-w/2+w*.33,hb*.04);x.font=fontStr('dot',hb*.13);x.fillText('No.'+String(info.no||1).padStart(4,'0'),-w/2+w*.33,hb*.3);x.setLineDash([S*.03,S*.03]);x.strokeStyle=rgba('#000000',.25);x.lineWidth=S*.012;x.beginPath();x.moveTo(-w/2+w*.28,-hb*.4);x.lineTo(-w/2+w*.28,hb*.4);x.stroke();x.setLineDash([]);drawMotif(x,th.motifs[0]||'star',-w/2+w*.14,0,hb*.42,0,C.ac,C.ac2);break}
+    case'label':{const w=S*1.15,hb=S*.5;shadowOn(x,th,S/14,.5);x.beginPath();x.moveTo(-w/2,0);x.lineTo(-w/2+hb*.45,-hb/2);x.lineTo(w/2,-hb/2);x.lineTo(w/2,hb/2);x.lineTo(-w/2+hb*.45,hb/2);x.closePath();x.fillStyle=C.ac;x.fill();shadowOff(x);x.fillStyle=C.bg;circ(x,-w/2+hb*.42,0,hb*.1);x.fill();x.strokeStyle=rgba(C.ink,.5);x.lineWidth=S*.012;x.beginPath();x.moveTo(-w/2+hb*.42,0);x.bezierCurveTo(-w/2-S*.1,-S*.05,-w/2-S*.15,S*.2,-w/2-S*.3,S*.12);x.stroke();x.fillStyle=lum(C.ac)>.55?C.ink:'#ffffff';x.font=fontStr('mochiy',hb*.36);x.textAlign='center';x.textBaseline='middle';x.fillText(fitText(x,info.dayLabel||'MEMORY',w*.7),hb*.22,hb*.03);break}
+    case'airmail':{const w=S*1.3,hb=S*.7,b=S*.07;x.save();shadowOn(x,th,S/14,.4);x.fillStyle='#fff';x.fillRect(-w/2,-hb/2,w,hb);shadowOff(x);x.beginPath();x.rect(-w/2,-hb/2,w,hb);x.rect(-w/2+b,-hb/2+b,w-2*b,hb-2*b);x.clip('evenodd');let i=0;for(let k=-w-hb*2;k<w;k+=b*1.6,i++){x.fillStyle=i%2?'#D9483B':'#2E5AA8';x.beginPath();x.moveTo(k,-hb);x.lineTo(k+b*.8,-hb);x.lineTo(k+b*.8+hb*2,hb);x.lineTo(k+hb*2,hb);x.closePath();x.fill()}x.restore();x.fillStyle='#2E5AA8';x.textAlign='center';x.textBaseline='middle';x.font=fontStr('dela',hb*.2);x.fillText('AIR MAIL',0,-hb*.08);x.font=fontStr('klee',hb*.14);x.fillText('par avion',0,hb*.18);break}
+    case'heart':case'starbadge':{const r=S*.3;shadowOn(x,th,S/14,.5);circ(x,0,0,r);x.fillStyle='#fff';x.fill();shadowOff(x);x.strokeStyle=rgba(C.ac,.55);x.lineWidth=S*.015;x.setLineDash([S*.03,S*.025]);circ(x,0,0,r*.84);x.stroke();x.setLineDash([]);drawMotif(x,id==='heart'?'heart':'star',0,r*.03,r*1.05,0,C.ac,C.ac2);break}
+  }
+  x.restore();
+}
+/* 版面範本（座標係相片區域嘅比例：x, y, 闊, 高, 角度） */
+const LAYOUTS={
+  scatter:{1:[[[.04,.02,.92,.94,-2]]],
+    2:[[[0,0,.66,.54,-3],[.32,.44,.68,.56,2.5]],[[0,.05,.52,.9,-3],[.48,0,.52,.9,3]],[[0,0,.52,.64,-2.5],[.34,.4,.66,.6,2]]],
+    3:[[[0,0,.6,.6,-2.5],[.56,.05,.44,.4,3],[.28,.55,.52,.44,-1.5]],[[.03,0,.94,.5,-1.5],[0,.53,.5,.44,2.5],[.5,.55,.5,.42,-2.5]],[[0,.04,.5,.5,-3],[.5,0,.5,.44,2],[.18,.5,.6,.48,1.5]]],
+    4:[[[0,0,.52,.48,-3],[.5,.03,.5,.45,2.5],[.02,.52,.48,.46,2],[.5,.52,.5,.48,-2]],[[0,0,.62,.45,-2],[.6,.06,.4,.38,3],[0,.5,.4,.45,2.5],[.38,.48,.62,.5,-1.5]]]},
+  neat:{1:[[[0,0,1,1,0]]],
+    2:[[[0,0,1,.485,0],[0,.515,1,.485,0]],[[0,0,.485,1,0],[.515,0,.485,1,0]]],
+    3:[[[0,0,.6,1,0],[.63,0,.37,.485,0],[.63,.515,.37,.485,0]],[[0,0,1,.56,0],[0,.59,.485,.41,0],[.515,.59,.485,.41,0]],[[0,0,.32,1,0],[.34,0,.32,1,0],[.68,0,.32,1,0]]],
+    4:[[[0,0,.485,.485,0],[.515,0,.485,.485,0],[0,.515,.485,.485,0],[.515,.515,.485,.485,0]],[[0,0,1,.5,0],[0,.53,.32,.47,0],[.34,.53,.32,.47,0],[.68,.53,.32,.47,0]],[[0,0,.485,.62,0],[.515,0,.485,.38,0],[0,.65,.485,.35,0],[.515,.41,.485,.59,0]]]},
+  mag:{1:[{s:[[0,0,1,.8,0]],t:[0,.85,1,.15]}],
+    2:[{s:[[0,0,1,.6,0],[.52,.64,.48,.36,0]],t:[0,.66,.46,.34]},{s:[[0,0,.6,1,0],[.64,0,.36,.48,0]],t:[.64,.54,.36,.46]}],
+    3:[{s:[[0,0,.62,.72,0],[.66,0,.34,.34,0],[.66,.38,.34,.34,0]],t:[0,.77,1,.23]},{s:[[0,0,1,.5,0],[0,.54,.48,.46,0],[.52,.54,.48,.26,0]],t:[.52,.84,.48,.16]}],
+    4:[{s:[[0,0,1,.46,0],[0,.5,.32,.3,0],[.34,.5,.32,.3,0],[.68,.5,.32,.3,0]],t:[0,.84,1,.16]}]}
+};
+const PERMS={1:[[0]],2:[[0,1],[1,0]],3:[],4:[]};
+(function(){for(const n of[3,4]){const out=[],go=(a,rest)=>{if(!rest.length)return out.push(a);rest.forEach((v,i)=>go([...a,v],rest.filter((_,j)=>j!==i)))};go([],[...Array(n).keys()]);PERMS[n]=out}})();
+function allTemplates(n){n=clamp(n,1,4);const out=[];for(const st of['scatter','neat','mag'])LAYOUTS[st][n].forEach(t=>out.push({st,T:Array.isArray(t)?{s:t}:t}));return out}
+function chooseLayout(page,th,aspects,area){
+  const n=aspects.length,all=allTemplates(n);
+  let cand=page.lay>=0?[all[page.lay%all.length]]:all.filter(a=>a.st===th.layout);if(!cand.length)cand=all;
+  const perms=page.fixed?[[...Array(n).keys()]]:PERMS[n],fk=frameRatio(th.frame,th.caps);
+  let best=null;
+  for(const c of cand)for(const p of perms){let sc=0;c.T.s.forEach((sl,i)=>{const sa=(sl[2]*area.w)/(sl[3]*area.h*fk);sc+=Math.abs(Math.log(sa/aspects[p[i]]))});if(!best||sc<best.sc-1e-9)best={c,p,sc}}
+  best.idx=all.indexOf(best.c);return best;
+}
+/* 頁面資料（標題、日期、地點…） */
+function dayNumbers(album){const m={};let n=0;for(const p of album.pages)if(p.kind==='photo'&&p.day&&p.day!=='nodate'&&!(p.day in m))m[p.day]=++n;return m}
+function pagePlace(album,page){
+  if(page.place!=null&&page.place!=='')return page.place;
+  for(const id of page.photoIds){const mt=album.photos[id];if(mt&&mt.lat!=null){const pl=nearestPlace(mt.lat,mt.lon);if(pl)return pl.n}}
+  return'';
+}
+function albumCountry(album){
+  const cnt={};for(const id in album.photos){const mt=album.photos[id];if(mt.lat!=null){const pl=nearestPlace(mt.lat,mt.lon);if(pl)cnt[pl.c]=(cnt[pl.c]||0)+1}}
+  const top=Object.entries(cnt).sort((a,b)=>b[1]-a[1])[0];return top?top[0]:'TRAVEL';
+}
+function albumRange(album){const ds=Object.values(album.photos).map(m=>m.date&&m.date.slice(0,10)).filter(Boolean).sort();return ds.length?[ds[0],ds[ds.length-1]]:[null,null]}
+function albumPlaces(album){const seen=[];for(const p of album.pages)if(p.kind==='photo'){const pl=pagePlace(album,p);if(pl&&!seen.includes(pl))seen.push(pl)}return seen}
+function pageInfo(album,page){
+  const nums=dayNumbers(album),country=albumCountry(album);
+  if(page.kind==='cover'){
+    const[a,b]=albumRange(album),pls=albumPlaces(album);
+    const auto=[fmtRange(a,b),pls.slice(0,4).join('・')].filter(Boolean).join('　');
+    return{title:album.title||'我的旅行',sub:page.sub!=null?page.sub:auto,place:pls[0]||'',dateShort:a?a.slice(2).replace(/-/g,'.'):'',dateDots:a?a.replace(/-/g,'.'):'',dayLabel:a?a.slice(0,4):'TRIP',country,no:1};
+  }
+  const place=pagePlace(album,page),dn=nums[page.day];
+  const idx=album.pages.filter(p=>p.kind==='photo').indexOf(page)+1;
+  const autoT=dn?`Day ${dn}`:`No.${String(idx).padStart(2,'0')}`;
+  const autoS=[fmtDay(page.day),place].filter(Boolean).join('・');
+  return{title:page.title!=null&&page.title!==''?page.title:autoT,sub:page.sub!=null?page.sub:autoS,place,
+    dateShort:page.day&&page.day!=='nodate'?page.day.slice(2).replace(/-/g,'.'):'',dateDots:page.day&&page.day!=='nodate'?page.day.replace(/-/g,'.'):'',
+    dayLabel:dn?`DAY ${dn}`:`No.${idx}`,country,no:idx,num:dn||idx};
+}
+/* 主畫頁函數 */
+async function renderPage(album,page,W,opts){
+  opts=opts||{};
+  const th=album.theme,C=th.colors,[ra,rb]=(SIZES[album.size]||SIZES['4x5']).r,H=Math.round(W*rb/ra),u=W/100;
+  const isCover=page.kind==='cover';
+  const tpls=allTemplates(Math.max(1,page.photoIds.length));
+  const isMag=!isCover&&(page.lay>=0?tpls[page.lay%tpls.length].st==='mag':th.layout==='mag');
+  const ids=page.photoIds.filter(id=>album.photos[id]).slice(0,isCover?1:4);
+  const info=pageInfo(album,page);
+  const caps=ids.map(id=>th.caps?(album.photos[id].cap||''):'');
+  await loadFonts([[th.titleFont,info.title+(isCover?th.jp:'')+(info.num||''),true],[th.capFont,caps.join('')+(page.note||'')+(info.sub||'')+info.place],['kurenaido',th.ch],['zenmaru','JAPAN'+info.place+info.country],['dot','0123456789.No'],['dela','TICKETAIR MAIL'],['mochiy',info.dayLabel],['klee','par avion']]);
+  const imgs=[];for(const id of ids){try{imgs.push(await getBitmap(id,opts.thumb))}catch(e){imgs.push(null)}}
+  const cv=document.createElement('canvas');cv.width=W;cv.height=H;const x=cv.getContext('2d');
+  const R=rng((page.seed||1)^hash(th.scene+th.layout+th.frame));
+  drawPaper(x,th,W,H,rng(page.seed||1));drawPattern(x,th,W,H);
+  const ins=patInsets(th,W,H),m=u*6.5;
+  const box={x:m+ins.l,y:m+ins.t,w:W-2*m-ins.l-ins.r,h:H-2*m-ins.t-ins.b};
+  const avoid=[],S=u*14,stickers=(th.stickers||[]).filter(k=>STICKERS[k]);
+  const ink=C.ink,tf=th.titleFont,cf=th.capFont;
+  let area,noteLines=[],noteFs=u*3.2,textRect=null;
+  /* 日記一句 */
+  if(page.note&&!isMag){x.font=fontStr(cf,noteFs);noteLines=wrapText(x,page.note,box.w*(isCover?.9:1),3)}
+  const noteH=noteLines.length?noteLines.length*noteFs*1.5+u*2:0;
+  if(isCover){
+    let y=box.y+u*3;
+    x.textAlign='center';x.textBaseline='alphabetic';
+    x.font=fontStr(tf,u*3.6,true);x.fillStyle=C.ac;x.fillText(fitText(x,th.jp||'',box.w),W/2,y+u*3);avoid.push([box.x,y,box.w,u*4.5]);y+=u*5;
+    const tfs=u*(info.title.length>10?7:8.6);x.font=fontStr(tf,tfs,true);const tl=wrapText(x,info.title,box.w*.92,2);
+    x.fillStyle=ink;tl.forEach((l,i)=>x.fillText(l,W/2,y+tfs*(.95+i*1.18)));const th2=tfs*(.3+tl.length*1.18);avoid.push([box.x,y,box.w,th2]);y+=th2;
+    if(info.sub){x.font=fontStr(cf,u*3);x.fillStyle=rgba(ink,.72);x.fillText(fitText(x,info.sub,box.w),W/2,y+u*3.2);avoid.push([box.x,y,box.w,u*4.4]);y+=u*4.6}
+    area={x:box.x+u*2,y:y+u*3.5,w:box.w-u*4,h:box.y+box.h-noteH-(y+u*3.5)-u*1};
+  }else{
+    const titleMaxW=box.w-(stickers[0]&&!isMag?S*1.15:0);
+    const tfs=u*(isMag?9.5:7);x.textAlign='left';x.textBaseline='alphabetic';
+    if(isMag){x.font=fontStr(tf,u*24,true);x.fillStyle=rgba(C.ac,th.dark?.3:.2);x.textAlign='right';x.fillText(String(info.num||'').padStart(2,'0'),box.x+box.w,box.y+u*17);x.textAlign='left'}
+    x.font=fontStr(tf,tfs,true);x.fillStyle=ink;
+    const tw0=x.measureText(info.title).width;if(tw0>titleMaxW)x.font=fontStr(tf,Math.max(tfs*.58,tfs*titleMaxW/tw0*.96),true);
+    const tt=fitText(x,info.title,titleMaxW);x.fillText(tt,box.x,box.y+tfs*.86);
+    const tw=Math.min(titleMaxW,x.measureText(tt).width);avoid.push([box.x,box.y,tw,tfs]);
+    x.fillStyle=C.ac;x.fillRect(box.x,box.y+tfs+u*1.3,u*9,Math.max(2,u*.65));
+    let tb=tfs+u*3.2;
+    if(info.sub){x.font=fontStr(cf,u*3);x.fillStyle=rgba(ink,.72);const st=fitText(x,info.sub,titleMaxW);x.fillText(st,box.x,box.y+tb+u*2.6);avoid.push([box.x,box.y+tb,x.measureText(st).width,u*3.6]);tb+=u*4.4}
+    area={x:box.x,y:box.y+tb+u*3,w:box.w,h:box.h-tb-u*3-noteH};
+  }
+  if(area.h<u*10)area.h=u*10;
+  /* 揀版面 */
+  const aspects=imgs.map(im=>im?(im.naturalWidth||im.width)/(im.naturalHeight||im.height):1.33);
+  let slots=[];
+  if(imgs.length){
+    if(isCover){
+      const fk=frameRatio(th.frame,th.caps&&caps[0]),a0=aspects[0];
+      let w=area.w*.94,hh=w/a0/fk;if(hh>area.h*.97){hh=area.h*.97;w=hh*a0*fk}
+      slots=[{cx:area.x+area.w/2,cy:area.y+area.h/2,w,h:hh,rot:th.layout==='scatter'?-2:0,i:0}];
+    }else{
+      const lay=chooseLayout(page,th,aspects,area);page._layIdx=lay.idx;
+      const sc=lay.c.st==='scatter'?.96:1,ax=area.x+area.w*(1-sc)/2,ay=area.y+area.h*(1-sc)/2,aw=area.w*sc,ah=area.h*sc;
+      slots=lay.c.T.s.map((sl,k)=>({cx:ax+(sl[0]+sl[2]/2)*aw,cy:ay+(sl[1]+sl[3]/2)*ah,w:sl[2]*aw,h:sl[3]*ah,rot:sl[4],i:lay.p[k]}));
+      if(lay.c.T.t){const t=lay.c.T.t;textRect={x:ax+t[0]*aw,y:ay+t[1]*ah,w:t[2]*aw,h:t[3]*ah}}
+    }
+    for(const s of slots)avoid.push([s.cx-s.w/2,s.cy-s.h/2,s.w,s.h]);
+  }
+  if(textRect)avoid.push([textRect.x,textRect.y,textRect.w,textRect.h]);
+  if(noteH)avoid.push([box.x,box.y+box.h-noteH,box.w,noteH]);
+  /* 散落裝飾（喺相後面） */
+  const motifs=(th.motifs||[]).filter(k=>MOTIFS[k]);
+  const pickCol=i=>i%3===2?[C.ac2,C.ac]:[C.ac,C.ac2];
+  if(motifs.length&&th.density>0){
+    const count=Math.round(th.density*.3*(isCover?1.25:1));
+    for(let i=0;i<count;i++){
+      const sz=u*(2.4+R()*2.4)*(th.decoScale||1);let ok=null;
+      for(let t=0;t<36&&!ok;t++){const px=R()*W,py=R()*H,pad=sz*.45;if(!avoid.some(([ax,ay,aw,ah])=>px>ax-pad&&px<ax+aw+pad&&py>ay-pad&&py<ay+ah+pad))ok=[px,py]}
+      if(!ok)continue;const[c1,c2]=pickCol(i);drawMotif(x,motifs[i%motifs.length],ok[0],ok[1],sz,R()*Math.PI*2,c1,c2,.82);
+    }
+  }
+  /* 相 */
+  const neat=isCover?th.layout!=='scatter':(slots.length&&slots.every(s=>!s.rot));
+  slots.forEach((s,k)=>{const img=imgs[s.i];if(!img)return;const cap=isMag?'':caps[s.i];drawFramed(x,th,img,s,cap,{u,R:rng((page.seed||1)+k*97),idx:k,tapeVar:neat?0:Math.floor(R()*3),no:info.no*10+k,stampNo:[84,110,63,120][k%4],country:info.country})});
+  /* 前景小裝飾（拼貼風先有） */
+  if(motifs.length&&th.density>=20&&slots.length&&!neat){
+    const n=Math.min(2,slots.length);
+    for(let k=0;k<n;k++){const s=slots[(k*2)%slots.length],sz=u*4.4*(th.decoScale||1),corner=R()<.5?-1:1;const px=s.cx+corner*s.w*.46,py=s.cy-corner*s.h*.44*(R()<.5?1:-1);const id=motifs[(k+1)%motifs.length],rot=R()*Math.PI*2;
+      if(!['snow','steam','wave','firework','confetti'].includes(id))drawMotif(x,id,px,py,sz*1.28,rot,'#ffffff','#ffffff');
+      const[c1,c2]=pickCol(k);drawMotif(x,id,px,py,sz,rot,c1,c2,1)}
+  }
+  /* 雜誌風文字框 */
+  if(textRect){
+    const tr=textRect;let y=tr.y+u*1.5;x.textAlign='left';x.textBaseline='alphabetic';
+    x.fillStyle=C.ac;x.fillRect(tr.x,y,u*6,Math.max(2,u*.5));y+=u*4;
+    if(page.note){x.font=fontStr(cf,u*3.1);x.fillStyle=ink;const ls=wrapText(x,page.note,tr.w,Math.max(1,Math.floor((tr.h-u*6)/(u*4.6))-(caps.some(Boolean)?1:0)));ls.forEach(l=>{x.fillText(l,tr.x,y);y+=u*4.6})}
+    x.font=fontStr(cf,u*2.5);x.fillStyle=rgba(ink,.72);
+    slots.forEach((s,k)=>{const c=caps[s.i];if(!c||y>tr.y+tr.h)return;x.fillText(fitText(x,`${String(k+1).padStart(2,'0')}　${c}`,tr.w),tr.x,y);y+=u*3.6});
+    if(!page.note&&!caps.some(Boolean)){
+      const big=info.place||th.jp||'';x.font=fontStr(tf,Math.min(u*5.4,tr.h*.32),true);x.fillStyle=ink;x.fillText(fitText(x,big,tr.w),tr.x,y+u*1.2);
+      x.font=fontStr(cf,u*2.7);x.fillStyle=rgba(ink,.65);x.fillText(fitText(x,[info.dateDots,info.country].filter(Boolean).join('　'),tr.w),tr.x,y+u*5.6);
+      if(motifs[0]&&tr.h>u*14)drawMotif(x,motifs[0],tr.x+u*3,y+u*10.5,u*4.6,-.2,C.ac,C.ac2,.9);
+    }
+  }
+  /* 貼紙 */
+  if(stickers[0]){
+    if(isCover)drawSticker(x,th,stickers[0],box.x+S*.55,area.y+area.h-S*.3,S,(R()-.5)*.35,info);
+    else if(isMag){const s0=slots[0]||{cx:area.x+area.w/2,cy:area.y+area.h/2,w:area.w,h:area.h};drawSticker(x,th,stickers[0],s0.cx+s0.w/2-S*.45,s0.cy-s0.h/2+S*.2,S*.9,(R()-.5)*.35,info)}
+    else drawSticker(x,th,stickers[0],box.x+box.w-S*.5,box.y+S*.42,S,(R()-.5)*.4,info);
+  }
+  if(stickers[1]&&slots.length&&!(isMag&&stickers[0])){
+    if(isCover)drawSticker(x,th,stickers[1],area.x+area.w-S*.45,area.y+S*.15,S*.92,(R()-.5)*.45,info);
+    else{const left=th.frame==='ticket'||R()<.5;drawSticker(x,th,stickers[1],left?area.x+S*.5:area.x+area.w-S*.5,area.y+area.h-S*.2,S*.92,(R()-.5)*.45,info)}
+  }
+  /* 日記一句 */
+  if(noteLines.length){
+    x.font=fontStr(cf,noteFs);x.fillStyle=rgba(ink,.88);x.textBaseline='alphabetic';x.textAlign=isCover?'center':'left';
+    let y=box.y+box.h-noteH+u*1.5+noteFs;for(const l of noteLines){x.fillText(l,isCover?W/2:box.x,y);y+=noteFs*1.5}
+  }
+  return cv;
+}
+/* 相片讀取（有快取） */
+const bmpCache=new Map();
+function decodeBlob(blob){
+  if(window.createImageBitmap)return createImageBitmap(blob).catch(()=>decodeImg(blob));
+  return decodeImg(blob);
+}
+function decodeImg(blob){
+  return new Promise((res,rej)=>{const url=URL.createObjectURL(blob),img=new Image();img.onload=()=>{res(img);setTimeout(()=>URL.revokeObjectURL(url),2000)};img.onerror=()=>{URL.revokeObjectURL(url);rej(new Error('讀唔到相'))};img.src=url});
+}
+function getBitmap(id,thumb){
+  const key=id+(thumb?':t':'');
+  if(bmpCache.has(key)){const v=bmpCache.get(key);bmpCache.delete(key);bmpCache.set(key,v);return v}
+  const p=dbGet('photos',id).then(rec=>{if(!rec)throw new Error('相片唔見咗');const buf=thumb&&rec.tb?rec.tb:rec.buf;return decodeBlob(new Blob([buf],{type:'image/jpeg'}))});
+  bmpCache.set(key,p);p.catch(()=>bmpCache.delete(key));
+  let full=0;for(const k of bmpCache.keys())if(!k.endsWith(':t'))full++;
+  for(const k of[...bmpCache.keys()]){if(bmpCache.size<=40&&full<=10)break;if(k===key)continue;if(!k.endsWith(':t')){if(full>10){bmpCache.delete(k);full--}}else if(bmpCache.size>40)bmpCache.delete(k)}
+  return p;
+}
+
+/* 地點（GPS → 最近城市，離線對照表） */
+const PLACES=[['東京',35.681,139.767,'JAPAN'],['新宿',35.690,139.700,'JAPAN'],['澀谷',35.658,139.702,'JAPAN'],['淺草',35.711,139.796,'JAPAN'],['銀座',35.671,139.765,'JAPAN'],['池袋',35.729,139.711,'JAPAN'],['台場',35.627,139.776,'JAPAN'],['舞濱',35.633,139.880,'JAPAN'],['橫濱',35.444,139.638,'JAPAN'],['鎌倉',35.319,139.547,'JAPAN'],['箱根',35.232,139.107,'JAPAN'],['河口湖',35.498,138.769,'JAPAN'],['富士山',35.360,138.727,'JAPAN'],['日光',36.750,139.598,'JAPAN'],['輕井澤',36.343,138.635,'JAPAN'],['成田',35.776,140.318,'JAPAN'],['川越',35.925,139.486,'JAPAN'],['熱海',35.096,139.072,'JAPAN'],['伊豆',34.966,139.102,'JAPAN'],['草津',36.621,138.596,'JAPAN'],
+['大阪',34.702,135.496,'JAPAN'],['難波',34.666,135.501,'JAPAN'],['環球影城',34.666,135.432,'JAPAN'],['京都',35.003,135.768,'JAPAN'],['嵐山',35.009,135.667,'JAPAN'],['伏見稻荷',34.967,135.773,'JAPAN'],['宇治',34.884,135.800,'JAPAN'],['奈良',34.685,135.805,'JAPAN'],['神戶',34.690,135.196,'JAPAN'],['姬路',34.839,134.694,'JAPAN'],['有馬溫泉',34.797,135.248,'JAPAN'],['和歌山',34.226,135.167,'JAPAN'],['白濱',33.680,135.348,'JAPAN'],['高野山',34.213,135.586,'JAPAN'],['伊勢',34.487,136.709,'JAPAN'],['名古屋',35.170,136.882,'JAPAN'],['高山',36.146,137.252,'JAPAN'],['白川鄉',36.257,136.906,'JAPAN'],['金澤',36.578,136.648,'JAPAN'],['松本',36.238,137.972,'JAPAN'],['長野',36.643,138.188,'JAPAN'],
+['廣島',34.397,132.475,'JAPAN'],['宮島',34.296,132.320,'JAPAN'],['岡山',34.666,133.918,'JAPAN'],['倉敷',34.596,133.772,'JAPAN'],['高松',34.343,134.047,'JAPAN'],['直島',34.460,133.995,'JAPAN'],['松山',33.839,132.766,'JAPAN'],['鳥取',35.501,134.235,'JAPAN'],['松江',35.468,133.049,'JAPAN'],['福岡',33.590,130.401,'JAPAN'],['太宰府',33.519,130.535,'JAPAN'],['由布院',33.263,131.355,'JAPAN'],['別府',33.284,131.491,'JAPAN'],['長崎',32.750,129.878,'JAPAN'],['熊本',32.803,130.708,'JAPAN'],['鹿兒島',31.596,130.557,'JAPAN'],['沖繩',26.212,127.681,'JAPAN'],['石垣島',24.340,124.156,'JAPAN'],['宮古島',24.805,125.281,'JAPAN'],
+['札幌',43.062,141.354,'JAPAN'],['小樽',43.190,140.994,'JAPAN'],['富良野',43.342,142.383,'JAPAN'],['美瑛',43.588,142.467,'JAPAN'],['旭川',43.771,142.365,'JAPAN'],['函館',41.769,140.729,'JAPAN'],['登別',42.413,141.106,'JAPAN'],['洞爺湖',42.565,140.818,'JAPAN'],['二世谷',42.805,140.687,'JAPAN'],['釧路',42.985,144.381,'JAPAN'],['仙台',38.268,140.870,'JAPAN'],['青森',40.822,140.747,'JAPAN'],['盛岡',39.702,141.154,'JAPAN'],['秋田',39.720,140.103,'JAPAN'],['銀山溫泉',38.570,140.530,'JAPAN'],['新潟',37.916,139.036,'JAPAN'],
+['香港',22.302,114.177,'HONG KONG'],['澳門',22.198,113.543,'MACAU'],['台北',25.048,121.517,'TAIWAN'],['九份',25.109,121.844,'TAIWAN'],['台中',24.137,120.686,'TAIWAN'],['台南',22.997,120.212,'TAIWAN'],['高雄',22.627,120.301,'TAIWAN'],['首爾',37.566,126.978,'KOREA'],['釜山',35.180,129.075,'KOREA'],['濟州',33.500,126.531,'KOREA'],['曼谷',13.746,100.535,'THAILAND'],['清邁',18.788,98.985,'THAILAND'],['新加坡',1.290,103.852,'SINGAPORE'],['上海',31.230,121.474,'CHINA'],['北京',39.904,116.407,'CHINA'],['吉隆坡',3.139,101.687,'MALAYSIA'],['峇里',-8.65,115.22,'INDONESIA']];
+function nearestPlace(lat,lon){
+  let best=null,bd=1e9;
+  for(const[n,a,b,c]of PLACES){const dy=(lat-a)*111,dx=(lon-b)*111*Math.cos(lat*Math.PI/180),d=Math.hypot(dx,dy);if(d<bd){bd=d;best={n,c,d}}}
+  return best&&best.d<45?best:null;
+}
+
+/* ══════════════ 儲存（IndexedDB，相片同相簿分開存） ══════════════ */
+let _db=null;
+function idb(){
+  return _db||(_db=new Promise((res,rej)=>{
+    const r=indexedDB.open('albumKobo',1);
+    r.onupgradeneeded=()=>{const d=r.result;if(!d.objectStoreNames.contains('albums'))d.createObjectStore('albums',{keyPath:'id'});if(!d.objectStoreNames.contains('photos'))d.createObjectStore('photos',{keyPath:'id'})};
+    r.onsuccess=()=>res(r.result);r.onerror=()=>{_db=null;rej(r.error)};
+  }));
+}
+async function tx(store,mode,fn){
+  const d=await idb();
+  return new Promise((res,rej)=>{const t=d.transaction(store,mode),s=t.objectStore(store);let out;const r=fn(s);if(r)r.onsuccess=()=>{out=r.result};t.oncomplete=()=>res(out);t.onerror=t.onabort=()=>rej(t.error||new Error('儲存失敗'))});
+}
+const dbGet=(st,k)=>tx(st,'readonly',s=>s.get(k));
+const dbPut=(st,v)=>tx(st,'readwrite',s=>s.put(v));
+const dbDel=(st,k)=>tx(st,'readwrite',s=>s.delete(k));
+const dbAll=st=>tx(st,'readonly',s=>s.getAll());
+
+/* ══════════════ 讀相：EXIF 日期／GPS + 壓縮 ══════════════ */
+async function readExif(file){
+  try{
+    const buf=await file.slice(0,262144).arrayBuffer(),v=new DataView(buf);
+    if(v.byteLength<4||v.getUint16(0)!==0xFFD8)return{};
+    let o=2;
+    while(o+4<v.byteLength){
+      const mk=v.getUint16(o);if((mk&0xFF00)!==0xFF00)break;
+      const len=v.getUint16(o+2);
+      if(mk===0xFFE1&&o+10<v.byteLength&&v.getUint32(o+4)===0x45786966)return parseTiff(v,o+10);
+      if(mk===0xFFDA)break;o+=2+len;
+    }
+  }catch(e){}
+  return{};
+}
+function parseTiff(v,t){
+  const le=v.getUint16(t)===0x4949,g16=p=>v.getUint16(p,le),g32=p=>v.getUint32(p,le),out={};
+  const ifd=p=>{const r={};if(p+2>v.byteLength)return r;const n=g16(p);for(let i=0;i<n;i++){const e=p+2+i*12;if(e+12>v.byteLength)break;r[g16(e)]={type:g16(e+2),cnt:g32(e+4),off:e+8}}return r};
+  const str=en=>{const off=en.cnt>4?t+g32(en.off):en.off;let s='';for(let i=0;i<en.cnt-1&&off+i<v.byteLength;i++){const c=v.getUint8(off+i);if(!c)break;s+=String.fromCharCode(c)}return s};
+  const rats=en=>{const off=t+g32(en.off),a=[];for(let i=0;i<en.cnt;i++){if(off+i*8+8>v.byteLength)break;const nu=g32(off+i*8),de=g32(off+i*8+4);a.push(de?nu/de:0)}return a};
+  try{
+    const i0=ifd(t+g32(t+4));let dt=null;
+    if(i0[0x8769]){const ex=ifd(t+g32(i0[0x8769].off));const e=ex[0x9003]||ex[0x9004];if(e)dt=str(e)}
+    if(!dt&&i0[0x0132])dt=str(i0[0x0132]);
+    if(dt){const m=dt.match(/(\d{4}):(\d{2}):(\d{2})[ T](\d{2}):(\d{2}):(\d{2})/);if(m&&m[1]!=='0000')out.date=`${m[1]}-${m[2]}-${m[3]}T${m[4]}:${m[5]}:${m[6]}`}
+    if(i0[0x8825]){const gp=ifd(t+g32(i0[0x8825].off));if(gp[2]&&gp[4]){const la=rats(gp[2]),lo=rats(gp[4]);if(la.length===3&&lo.length===3){let lat=la[0]+la[1]/60+la[2]/3600,lon=lo[0]+lo[1]/60+lo[2]/3600;if(gp[1]&&str(gp[1])==='S')lat=-lat;if(gp[3]&&str(gp[3])==='W')lon=-lon;if(lat||lon){out.lat=+lat.toFixed(5);out.lon=+lon.toFixed(5)}}}}
+  }catch(e){}
+  return out;
+}
+function canvasBuf(c,q){return new Promise((res,rej)=>c.toBlob(b=>b?b.arrayBuffer().then(res,rej):rej(new Error('壓縮失敗')),'image/jpeg',q))}
+async function shrinkFile(f){
+  const url=URL.createObjectURL(f);
+  try{
+    const img=new Image();img.src=url;
+    await new Promise((res,rej)=>{img.onload=res;img.onerror=()=>rej(new Error('呢張相格式讀唔到'))});
+    const iw=img.naturalWidth,ih=img.naturalHeight;if(!iw||!ih)throw new Error('呢張相格式讀唔到');
+    const mk=max=>{const sc=Math.min(1,max/Math.max(iw,ih)),c=document.createElement('canvas');c.width=Math.max(1,Math.round(iw*sc));c.height=Math.max(1,Math.round(ih*sc));c.getContext('2d').drawImage(img,0,0,c.width,c.height);return c};
+    const c1=mk(1600),full=await canvasBuf(c1,.86),w=c1.width,hh=c1.height;c1.width=c1.height=0;
+    const c2=mk(420),tb=await canvasBuf(c2,.8);c2.width=c2.height=0;
+    return{full,tb,w,h:hh};
+  }finally{URL.revokeObjectURL(url)}
+}
+async function importFiles(files,onProg){
+  const out=[];let fail=0;
+  for(let i=0;i<files.length;i++){
+    onProg&&onProg(i,files.length);
+    const f=files[i];
+    try{
+      const ex=await readExif(f),r=await shrinkFile(f),id=uid();
+      await dbPut('photos',{id,buf:r.full,tb:r.tb});
+      let date=ex.date||null;
+      if(!date&&f.lastModified&&Date.now()-f.lastModified>15*60*1000){const d=new Date(f.lastModified),p=n=>String(n).padStart(2,'0');date=`${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`}
+      out.push({id,w:r.w,h:r.h,date,lat:ex.lat!=null?ex.lat:null,lon:ex.lon!=null?ex.lon:null,cap:'',name:String(f.name||'').slice(0,80)});
+    }catch(e){console.warn(e);fail++}
+    if(i%4===3)await sleep(0);
+  }
+  onProg&&onProg(files.length,files.length);
+  return{metas:out,fail};
+}
+
+/* ══════════════ 自動分頁（按拍攝日期分日） ══════════════ */
+const dayKeyOf=mt=>mt&&mt.date?mt.date.slice(0,10):'nodate';
+function splitBalanced(arr,max){const k=Math.ceil(arr.length/max),out=[];let i=0;for(let p=0;p<k;p++){const n=Math.floor(arr.length/k)+(p<arr.length%k?1:0);out.push(arr.slice(i,i+n));i+=n}return out}
+function newPage(day,ids){return{id:uid(),kind:'photo',day,photoIds:ids,title:null,sub:null,place:null,note:'',seed:newSeed(),lay:-1,fixed:false,v:0}}
+function sortPages(album){
+  const cover=album.pages.filter(p=>p.kind==='cover'),rest=album.pages.filter(p=>p.kind!=='cover');
+  const key=p=>p.day&&p.day!=='nodate'?p.day:'9999';
+  rest.sort((a,b)=>key(a)<key(b)?-1:key(a)>key(b)?1:0);album.pages=[...cover,...rest];
+}
+function addPhotosToPages(album,metas){
+  metas.forEach(mt=>{album.photos[mt.id]=mt});
+  const sorted=metas.slice().sort((a,b)=>{const A=a.date||'9999',B=b.date||'9999';return A<B?-1:A>B?1:0});
+  const groups=new Map();for(const mt of sorted){const k=dayKeyOf(mt);if(!groups.has(k))groups.set(k,[]);groups.get(k).push(mt.id)}
+  const per=clamp(album.perPage||3,1,4);
+  for(const[k,ids]of groups){
+    let rest=ids;const same=album.pages.filter(p=>p.kind==='photo'&&p.day===k),last=same[same.length-1];
+    if(last&&last.photoIds.length<per){const room=per-last.photoIds.length;last.photoIds.push(...rest.slice(0,room));rest=rest.slice(room);last.v=(last.v||0)+1}
+    if(rest.length)for(const chunk of splitBalanced(rest,per))album.pages.push(newPage(k,chunk));
+  }
+  sortPages(album);
+  if(!album.pages.some(p=>p.kind==='cover')){
+    const first=sorted.find(m=>m.w>=m.h)||sorted[0];
+    album.pages.unshift({id:uid(),kind:'cover',photoIds:first?[first.id]:[],title:null,sub:null,note:'',seed:newSeed(),lay:-1,v:0});
+  }
+}
+function repaginate(album){
+  const cover=album.pages.find(p=>p.kind==='cover');
+  album.pages=cover?[cover]:[];
+  addPhotosToPages(album,Object.values(album.photos));
+}
+function usedPhotoIds(album){const s=new Set();album.pages.forEach(p=>p.photoIds.forEach(id=>s.add(id)));return s}
+async function dropOrphans(album){
+  const used=usedPhotoIds(album);
+  for(const id of Object.keys(album.photos))if(!used.has(id)){delete album.photos[id];bmpCache.delete(id);bmpCache.delete(id+':t');await dbDel('photos',id).catch(()=>{})}
+  album.pages=album.pages.filter(p=>p.kind==='cover'||p.photoIds.length);
+}
+
+/* ══════════════ 主題引擎：你講嘅說話 → 設計配方 ══════════════ */
+function paletteFromAccent(ac,dark,ac2){
+  const[hh,s,l]=hslOf(ac);
+  const a2=ac2||fromHsl(hh+38,clamp(s*.85,.2,.85),clamp(l+.08,.35,.8));
+  if(dark)return{bg:fromHsl(hh,clamp(s*.45,.15,.5),.11),ac,ac2:a2,ink:fromHsl(hh,.25,.93)};
+  return{bg:fromHsl(hh,clamp(s*.55,.15,.6),.955),ac,ac2:a2,ink:fromHsl(hh,clamp(s*.5,.15,.5),.2)};
+}
+const desat=(c,k)=>{const[hh,s,l]=hslOf(c);return fromHsl(hh,s*k,l)};
+function fixContrast(th){
+  const C=th.colors,lb=lum(C.bg),li=lum(C.ink),ratio=(Math.max(lb,li)+.05)/(Math.min(lb,li)+.05);
+  if(ratio<4.5){const[hh]=hslOf(C.ac);C.ink=lb>.4?fromHsl(hh,.3,.18):fromHsl(hh,.2,.93)}
+  th.dark=lb<.3;return th;
+}
+function parseRequest(text,base){
+  const raw=String(text||'').trim(),q=raw.toLowerCase(),hits=[];
+  let best=null,bs=0;
+  for(const id in SCENES){let s=0;for(const w of SCENES[id].kw)if(q.includes(w))s+=w.length;if(s>bs){bs=s;best=id}}
+  if(best)for(const w of SCENES[best].kw)if(q.includes(w)&&!SCENES[best].kw.some(o=>o!==w&&o.includes(w)&&q.includes(o)))hits.push(w);
+  const th=best?sceneRecipe(best):JSON.parse(JSON.stringify(base||sceneRecipe('sakura')));
+  if(best&&base)th.caps=base.caps;
+  th.request=raw;
+  let rest=q;for(const id in SCENES)for(const w of SCENES[id].kw)rest=rest.split(w).join(' ');
+  let denAdd=0;
+  for(const st of STYLES){const m=st.kw.filter(w=>q.includes(w));if(m.length){hits.push(...m);Object.assign(th,JSON.parse(JSON.stringify(st.set)));if(st.den)denAdd+=st.den;if(st.denSet!=null)th.density=st.denSet}}
+  th.density=clamp(th.density+denAdd,0,100);
+  const mm=[];for(const w in MOTIF_WORDS)if(q.includes(w)){mm.push(MOTIF_WORDS[w]);hits.push(w)}
+  if(mm.length)th.motifs=[...new Set([...mm,...th.motifs])].slice(0,3);
+  for(const w in PATTERN_WORDS)if(q.includes(w)){th.pattern=PATTERN_WORDS[w];if(!th.patPos||th.patPos==='none')th.patPos='band';hits.push(w)}
+  for(const w in FRAME_WORDS)if(q.includes(w)){th.frame=FRAME_WORDS[w];hits.push(w)}
+  for(const w in FONT_WORDS)if(q.includes(w)){th.titleFont=FONT_WORDS[w];hits.push(w)}
+  for(const w in FILTER_WORDS)if(q.includes(w)){th.filter=FILTER_WORDS[w];hits.push(w)}
+  for(const w in MOTIF_WORDS)rest=rest.split(w).join(' ');
+  const wantDark=/黑|深色|暗|夜/.test(rest),wantLight=/白色|淺|淡|粉嫩|明亮/.test(rest);
+  const cols=[];for(const[w,c]of COLOR_WORDS)if(rest.includes(w)){cols.push(c);hits.push(w);rest=rest.split(w).join(' ')}
+  if(cols.length){th.colors=paletteFromAccent(cols[0],th.dark&&!wantLight,cols[1]);th.photoColors=false}
+  if(wantDark&&!th.dark){th.dark=true;const[hh,s]=hslOf(th.colors.ac);th.colors.bg=fromHsl(hh,clamp(s*.45,.15,.5),.11);th.colors.ink=fromHsl(hh,.2,.93);hits.push('深色')}
+  else if(wantLight&&th.dark){th.dark=false;const[hh,s]=hslOf(th.colors.ac);th.colors.bg=fromHsl(hh,clamp(s*.5,.15,.6),.955);th.colors.ink=fromHsl(hh,.35,.2);hits.push('淺色')}
+  if(/莫蘭迪|低飽和|灰調|霧/.test(q)){for(const k of['ac','ac2','bg'])th.colors[k]=desat(th.colors[k],.5);hits.push('莫蘭迪')}
+  if(/撞色|高飽和/.test(q)){for(const k of['ac','ac2'])th.colors[k]=desat(th.colors[k],1.35);hits.push('高飽和')}
+  fixContrast(th);
+  return{th,hits:[...new Set(hits)],scene:best,hasColor:cols.length>0};
+}
+/* 由相片抽顏色 */
+function extractPalette(imgs){
+  const c=document.createElement('canvas');c.width=c.height=48;const x=c.getContext('2d',{willReadFrequently:true});
+  const bins={},A=[0,0,0];let n=0;
+  for(const im of imgs){
+    try{x.clearRect(0,0,48,48);x.drawImage(im,0,0,48,48);const d=x.getImageData(0,0,48,48).data;
+      for(let i=0;i<d.length;i+=4){const r=d[i],g=d[i+1],b=d[i+2];A[0]+=r;A[1]+=g;A[2]+=b;n++;const[hh,s,l]=rgb2hsl(r,g,b);if(s<.25||l<.18||l>.85)continue;const k=Math.floor(hh/20)%18;const o=bins[k]||(bins[k]={w:0,n:0,c:[0,0,0],h:k});o.w+=s*(1-Math.abs(l-.5));o.n++;o.c[0]+=r;o.c[1]+=g;o.c[2]+=b}
+    }catch(e){}
+  }
+  if(!n)return null;
+  const sorted=Object.values(bins).sort((a,b)=>b.w-a.w),avg=toHex(A.map(v=>v/n)),[ha,sa]=hslOf(avg);
+  if(!sorted.length)return paletteFromAccent(fromHsl(ha,.35,.45),false);
+  const top=sorted[0],sec=sorted.find(b=>Math.min(Math.abs(b.h-top.h),18-Math.abs(b.h-top.h))>=3);
+  const[h1,s1,l1]=hslOf(toHex(top.c.map(v=>v/top.n)));
+  const ac=fromHsl(h1,clamp(s1,.35,.78),clamp(l1,.42,.6));
+  let ac2;if(sec){const[h2,s2,l2]=hslOf(toHex(sec.c.map(v=>v/sec.n)));ac2=fromHsl(h2,clamp(s2,.3,.72),clamp(l2,.5,.68))}else ac2=fromHsl(h1+35,clamp(s1*.8,.3,.7),.66);
+  return{bg:fromHsl(ha,clamp(sa*.6,.08,.4),.952),ac,ac2,ink:fromHsl(h1,.3,.2),bgDark:fromHsl(ha,clamp(sa*.5,.1,.4),.11),inkDark:fromHsl(h1,.2,.93)};
+}
+async function albumPalette(album){
+  if(album._pal)return album._pal;
+  const ids=Object.keys(album.photos).slice(0,12),imgs=[];
+  for(const id of ids){try{imgs.push(await getBitmap(id,true))}catch(e){}}
+  return album._pal=extractPalette(imgs);
+}
+function applyPal(th,pal){
+  if(!pal)return th;
+  th.colors=th.dark?{bg:pal.bgDark,ac:pal.ac,ac2:pal.ac2,ink:pal.inkDark}:{bg:pal.bg,ac:pal.ac,ac2:pal.ac2,ink:pal.ink};
+  return fixContrast(th);
+}
+
+/* ══════════════ AI 設計（免費 copy-paste，或者有 Key 就自動） ══════════════ */
+const AIKEY='albumKobo_aiKey';
+function aiKeyOwn(){try{return localStorage.getItem(AIKEY)||''}catch(e){return''}}
+function aiKeyShared(){try{return localStorage.getItem('tabiNote_aiKey')||''}catch(e){return''}}
+function aiKeyGet(){return aiKeyOwn()||aiKeyShared()}
+function aiKeySet(k){try{k?localStorage.setItem(AIKEY,k):localStorage.removeItem(AIKEY)}catch(e){}}
+function catList(o){return Object.entries(o).map(([k,v])=>`${k}(${v.n||v})`).join('、')}
+function aiPrompt(album,req,withPhotos){
+  const[a,b]=albumRange(album),pls=albumPlaces(album);
+  return'你係專業相簿／手帳設計師。我用一套「素材 id」去砌旅行相簿頁面，請按我嘅要求揀一套好睇、和諧嘅配搭。\n\n'+
+  `我嘅要求：${req||'（冇特別要求，請按相簿資料自由發揮）'}\n`+
+  `相簿名：${album.title||''}；日期：${fmtRange(a,b)||'未知'}；地點：${pls.join('、')||'未知'}\n`+
+  (withPhotos?'我附上咗幾張相，請參考相片嘅色調嚟配色。\n':'')+
+  '\n可用素材（每項只可以用以下 id）：\n'+
+  `scene 基礎主題：${Object.entries(SCENES).map(([k,v])=>`${k}(${v.n})`).join('、')}\n`+
+  `motifs 散落裝飾（揀1–3個）：${catList(MOTIFS)}\n`+
+  `pattern 和柄花紋：${catList(PATTERNS)}\n`+
+  `patPos 花紋位置：${catList(PAT_POS)}\n`+
+  `paper 背景紙：${catList(PAPERS)}\n`+
+  `frame 相框：${catList(FRAMES)}\n`+
+  `washi 紙膠帶：${catList(WASHI)}\n`+
+  `stickers 貼紙印章（揀0–2個）：${catList(STICKERS)}\n`+
+  `titleFont／capFont 字體：${catList(FONTS)}\n`+
+  `filter 相片濾鏡（冇要求就用 none）：${catList(FILTERS)}\n`+
+  `layout 排版：${catList(LAYSTYLE)}\n`+
+  '\n只回覆一段 JSON（唔好任何解釋、唔好用 code block），格式：\n'+
+  '{"name":"主題名(≤8字)","jp":"日文小標題(≤8字)","stampChar":"印章單字","scene":"id","colors":{"bg":"#RRGGBB","ac":"#RRGGBB","ac2":"#RRGGBB","ink":"#RRGGBB"},"dark":false,"motifs":["id"],"density":40,"pattern":"id","patPos":"id","paper":"id","frame":"id","washi":"id","stickers":["id"],"titleFont":"id","capFont":"id","filter":"none","layout":"id"}\n\n'+
+  '規則：bg＝背景色、ac＝主色、ac2＝副色、ink＝文字色；bg 同 ink 對比要夠（淺底深字；夜景類可以深底淺字，dark 設 true）；density 0–100（裝飾數量）；capFont 建議 wenkai（支援繁體中文）。';
+}
+function parseAIReply(text){
+  const s=String(text||'').replace(/```(json)?/gi,''),i=s.indexOf('{'),j=s.lastIndexOf('}');
+  if(i<0||j<=i)throw new Error('搵唔到 JSON，記得成段回覆貼晒落嚟');
+  try{return JSON.parse(s.slice(i,j+1))}catch(e){throw new Error('JSON 格式有錯，叫 AI 再出一次')}
+}
+function recipeFromAI(obj,base){
+  let th=JSON.parse(JSON.stringify(base));
+  if(obj.scene&&SCENES[obj.scene]){const caps=th.caps;th=sceneRecipe(obj.scene);th.caps=caps}
+  const pick=(k,cat)=>{if(obj[k]!=null&&cat[obj[k]])th[k]=obj[k]};
+  pick('pattern',PATTERNS);pick('patPos',PAT_POS);pick('paper',PAPERS);pick('frame',FRAMES);pick('washi',WASHI);pick('titleFont',FONTS);pick('capFont',FONTS);pick('filter',FILTERS);pick('layout',LAYSTYLE);
+  if(Array.isArray(obj.motifs)){const m=obj.motifs.filter(k=>MOTIFS[k]).slice(0,3);if(m.length)th.motifs=m}
+  if(Array.isArray(obj.stickers))th.stickers=obj.stickers.filter(k=>STICKERS[k]).slice(0,2);
+  if(obj.density!=null&&!isNaN(+obj.density))th.density=clamp(Math.round(+obj.density),0,100);
+  if(obj.colors)for(const k of['bg','ac','ac2','ink'])if(isHex(obj.colors[k]))th.colors[k]=obj.colors[k].trim().toUpperCase();
+  if(obj.name)th.name=String(obj.name).slice(0,12);
+  if(obj.jp)th.jp=String(obj.jp).slice(0,14);
+  if(obj.stampChar)th.ch=[...String(obj.stampChar)][0];
+  th.photoColors=false;th.request=th.request||'';
+  return fixContrast(th);
+}
+async function aiCall(prompt,dataUrls){
+  dataUrls=dataUrls||[];const key=aiKeyGet();let res;
+  try{
+    if(/^sk-ant-/.test(key)){
+      const content=dataUrls.map(d=>({type:'image',source:{type:'base64',media_type:'image/jpeg',data:d.split(',')[1]}}));content.push({type:'text',text:prompt});
+      res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'content-type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-haiku-5-5',max_tokens:1200,messages:[{role:'user',content}]})});
+    }else if(/^sk-/.test(key)){
+      const parts=[{type:'text',text:prompt}];dataUrls.forEach(d=>parts.push({type:'image_url',image_url:{url:d}}));
+      res=await fetch('https://api.openai.com/v1/chat/completions',{method:'POST',headers:{'content-type':'application/json',Authorization:'Bearer '+key},body:JSON.stringify({model:'gpt-4o-mini',max_tokens:1200,messages:[{role:'user',content:parts}]})});
+    }else{
+      const gp=dataUrls.map(d=>({inline_data:{mime_type:'image/jpeg',data:d.split(',')[1]}}));gp.push({text:prompt});
+      for(const mdl of['gemini-2.5-flash','gemini-2.0-flash','gemini-flash-latest','gemini-1.5-flash']){
+        res=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+mdl+':generateContent',{method:'POST',headers:{'content-type':'application/json','x-goog-api-key':key},body:JSON.stringify({contents:[{role:'user',parts:gp}],generationConfig:{maxOutputTokens:1500}})});
+        if(res.ok)break;if(res.status!==404&&res.status!==400)break;
+      }
+    }
+  }catch(e){throw new Error('連唔到 AI 服務，請檢查網絡')}
+  if(!res.ok){
+    let em='';try{const ej=await res.json();em=ej&&ej.error&&ej.error.message?ej.error.message:''}catch(e){}
+    if(res.status===401||res.status===403||/api key not valid/i.test(em))throw new Error('API Key 無效，去「AI 設定」檢查吓');
+    if(res.status===429)throw new Error('請求太密或者今日額度用完，遲啲再試');
+    throw new Error('AI 服務錯誤（'+res.status+(em?'：'+em.slice(0,80):'')+'）');
+  }
+  const dj=await res.json();
+  if(dj.content&&dj.content[0])return dj.content[0].text||'';
+  if(dj.choices&&dj.choices[0])return dj.choices[0].message.content||'';
+  if(dj.candidates&&dj.candidates[0]&&dj.candidates[0].content)return(dj.candidates[0].content.parts||[]).map(p=>p.text||'').join('');
+  return'';
+}
+async function photoDataUrls(album,n){
+  const out=[];for(const id of Object.keys(album.photos).slice(0,n)){try{const rec=await dbGet('photos',id);if(rec&&rec.tb)out.push(await bufToDataURL(rec.tb))}catch(e){}}return out;
+}
+function bufToDataURL(buf,type){return new Promise((res,rej)=>{const fr=new FileReader();fr.onload=()=>res(fr.result);fr.onerror=()=>rej(fr.error);fr.readAsDataURL(new Blob([buf],{type:type||'image/jpeg'}))})}
+
+/* ══════════════ 介面 ══════════════ */
+const app=$('#app');
+const S={album:null,fromHome:false};
+const PREVIEW_W=900;
+const EXAMPLES=['櫻花 粉紅 可愛','京都 和風 復古','北海道 雪 簡約','夏祭 花火','紅葉 雜誌','沖繩 海 手帳','東京 夜景','迪士尼 繽紛','溫泉 優雅','美食 可愛','星空 浪漫','咖啡 奶茶色 極簡','富士山 明信片','奈良 鹿 可愛','薰衣草 紫色','新年 毛筆'];
+const lsGet=k=>{try{return localStorage.getItem('albumKobo_'+k)}catch(e){return null}};
+const lsSet=(k,v)=>{try{localStorage.setItem('albumKobo_'+k,v)}catch(e){}};
+const isStandalone=()=>navigator.standalone===true||(window.matchMedia&&matchMedia('(display-mode: standalone)').matches);
+const safeName=s=>String(s||'album').replace(/[\\/:*?"<>|\s]+/g,'_').slice(0,40);
+function toast(msg,ms){let t=$('.toast');if(!t){t=h('div',{class:'toast'});document.body.append(t)}t.textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),ms||2200)}
+function busy(msg){
+  const bar=h('i'),t=h('div',{class:'muted',style:'margin-top:6px'});
+  const el=h('div',{class:'busy'},h('div',{class:'card'},h('div',{class:'spin',style:'margin:0 auto 10px'}),h('b',null,msg),t,h('div',{class:'bar'},bar)));
+  document.body.append(el);
+  return{set(p,txt){bar.style.width=Math.round(clamp(p,0,1)*100)+'%';if(txt!=null)t.textContent=txt},close(){el.remove()}};
+}
+const sheets=[];
+function openSheet(title,body,o){
+  o=o||{};
+  const scrim=h('div',{class:'scrim'});
+  const hd=h('div',{class:'sh-hd'},h('h2',null,title),...(o.actions||[]),h('button',{class:'ib','aria-label':'關閉',onclick:()=>api.close()},'✕'));
+  const bd=h('div',{class:'sh-bd'},body);
+  const sh=h('div',{class:'sheet'+(o.tall?' tall':'')},hd,o.preview||null,bd);
+  document.body.append(scrim,sh);document.body.classList.add('lock');
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{scrim.classList.add('show');sh.classList.add('show')}));
+  let closed=false;
+  const api={body:bd,el:sh,close(ok){
+    if(closed)return;closed=true;
+    try{o.onClose&&o.onClose(ok)}catch(e){console.error(e)}
+    scrim.classList.remove('show');sh.classList.remove('show');
+    setTimeout(()=>{scrim.remove();sh.remove()},300);
+    const i=sheets.indexOf(api);if(i>=0)sheets.splice(i,1);
+    if(!sheets.length)document.body.classList.remove('lock');
+  }};
+  scrim.onclick=()=>api.close();sheets.push(api);return api;
+}
+function askText(title,val,ph){
+  return new Promise(res=>{
+    const inp=h('input',{value:val||'',placeholder:ph||''});let done=false;
+    const ok=h('button',{class:'btn pri block',style:'margin-top:12px',onclick:()=>{done=true;res(inp.value.trim());sh.close(true)}},'確定');
+    inp.addEventListener('keydown',e=>{if(e.key==='Enter')ok.click()});
+    const sh=openSheet(title,h('div',null,inp,ok),{onClose:()=>{if(!done)res(null)}});
+    setTimeout(()=>inp.focus(),320);
+  });
+}
+function confirmBox(title,msg,okText,danger){
+  return new Promise(res=>{
+    let done=false;
+    const sh=openSheet(title,h('div',null,h('p',{style:'margin-bottom:16px;line-height:1.65'},msg),
+      h('div',{class:'row'},h('button',{class:'btn grow',onclick:()=>sh.close()},'取消'),
+        h('button',{class:'btn pri grow',style:danger?'background:var(--danger);border-color:var(--danger)':'',onclick:()=>{done=true;res(true);sh.close(true)}},okText||'確定'))),
+      {onClose:()=>{if(!done)res(false)}});
+  });
+}
+function seg(opts,val,on){
+  const el=h('div',{class:'seg'});
+  const btns=opts.map(([k,l])=>{const b=h('button',{class:String(k)===String(val)?'on':'',onclick:()=>{el.setVal(k);on(k)}},l);b._k=k;return b});
+  el.setVal=v=>btns.forEach(b=>b.classList.toggle('on',String(b._k)===String(v)));
+  el.append(...btns);return el;
+}
+const sec=(title,right,...kids)=>h('div',{class:'sec'},h('h3',null,title,right!=null&&right!==''?h('span',{class:'r'},right):null),...kids);
+const hsc=(...k)=>h('div',{class:'hs'},...k);
+function pickFiles(cb){const inp=$('#filePick');inp.value='';inp.onchange=()=>{const fs=[...inp.files];if(fs.length)cb(fs)};inp.click()}
+function canvasURL(cv,q){return new Promise(r=>cv.toBlob(b=>{cv.width=cv.height=0;r(URL.createObjectURL(b))},'image/jpeg',q||.9))}
+function canvasFile(cv,name){return new Promise((r,j)=>cv.toBlob(b=>{cv.width=cv.height=0;b?r(new File([b],name,{type:'image/jpeg'})):j(new Error('匯出失敗'))},'image/jpeg',.92))}
+const fileName=(a,i)=>`${safeName(a.title)}-${String(i+1).padStart(2,'0')}.jpg`;
+async function copyText(t){
+  try{await navigator.clipboard.writeText(t);return true}catch(e){}
+  try{const ta=h('textarea',{style:'position:fixed;top:-1000px;left:0'},t);document.body.append(ta);ta.select();const ok=document.execCommand('copy');ta.remove();return ok}catch(e){return false}
+}
+function downloadFiles(files){
+  files.forEach((f,i)=>setTimeout(()=>{const u=URL.createObjectURL(f),el=h('a',{href:u,download:f.name});document.body.append(el);el.click();el.remove();setTimeout(()=>URL.revokeObjectURL(u),5000)},i*400));
+}
+async function shareOrDownload(files){
+  const can=navigator.canShare&&(()=>{try{return navigator.canShare({files})}catch(e){return false}})();
+  if(can){
+    try{await navigator.share({files});return}
+    catch(e){
+      if(e&&e.name==='AbortError')return;
+      if(e&&e.name==='NotAllowedError'){const sh=openSheet('準備好喇',h('div',null,h('p',{class:'hint',style:'font-size:14px;margin-bottom:12px'},`${files.length} 個檔案已經準備好。`),h('button',{class:'btn pri block',onclick:()=>{sh.close();shareOrDownload(files)}},'📤 分享／儲存'),h('button',{class:'btn block',style:'margin-top:8px',onclick:()=>{sh.close();downloadFiles(files)}},'⬇︎ 下載')));return}
+    }
+  }
+  downloadFiles(files);
+}
+let thumbURLs=[];
+async function thumbURL(id){const rec=await dbGet('photos',id);if(!rec)return'';const u=URL.createObjectURL(new Blob([rec.tb||rec.buf],{type:'image/jpeg'}));thumbURLs.push(u);return u}
+function freeThumbs(){thumbURLs.forEach(u=>URL.revokeObjectURL(u));thumbURLs=[]}
+
+/* 素材圖示（全部即場畫，按顏色快取） */
+const iconCache=new Map();
+function icon(key,draw,size){
+  let src=iconCache.get(key);
+  if(!src){size=size||124;const[c,x]=tileCv(size,size);try{draw(x,size)}catch(e){console.warn(e)}src=c;iconCache.set(key,c);if(iconCache.size>260)iconCache.delete(iconCache.keys().next().value)}
+  const out=document.createElement('canvas');out.width=src.width;out.height=src.height;out.getContext('2d').drawImage(src,0,0);return out;
+}
+const colKey=th=>[th.colors.bg,th.colors.ac,th.colors.ac2,th.colors.ink,th.dark?1:0].join(',');
+let SAMPLE=null;
+function sampleImg(){
+  if(SAMPLE)return SAMPLE;const[c,x]=tileCv(300,220);
+  const g=x.createLinearGradient(0,0,0,220);g.addColorStop(0,'#9CC6E8');g.addColorStop(1,'#E9F1F7');x.fillStyle=g;x.fillRect(0,0,300,220);
+  x.fillStyle='#F7E3A1';circ(x,235,55,22);x.fill();x.fillStyle='#5B7BA6';poly(x,[[30,170],[150,50],[270,170]]);x.fill();
+  x.fillStyle='#fff';poly(x,[[122,78],[150,50],[178,78],[165,74],[150,86],[136,74]]);x.fill();
+  x.fillStyle='#7FA77A';x.fillRect(0,165,300,55);x.fillStyle='#F3B9C8';[[40,170,28],[90,182,22],[255,175,30],[210,188,20]].forEach(([a,b,r])=>{circ(x,a,b,r);x.fill()});
+  return SAMPLE=c;
+}
+const STK_INFO={country:'JAPAN',dateShort:'25.04.03',dateDots:'2025.04.03',place:'京都',dayLabel:'DAY 1',no:1};
+const motifIcon=(th,id)=>icon('m:'+id+colKey(th),(x,s)=>{x.fillStyle=th.colors.bg;x.fillRect(0,0,s,s);drawMotif(x,id,s/2,s/2,s*.62,0,th.colors.ac,th.colors.ac2)});
+const patternIcon=(th,id)=>icon('p:'+id+colKey(th),(x,s)=>{x.fillStyle=th.colors.bg;x.fillRect(0,0,s,s);const P=PATTERNS[id];if(!P.t){x.strokeStyle=rgba(th.colors.ink,.3);x.lineWidth=4;circ(x,s/2,s/2,s*.2);x.stroke();x.beginPath();x.moveTo(s*.36,s*.64);x.lineTo(s*.64,s*.36);x.stroke();return}x.globalAlpha=.75;x.fillStyle=x.createPattern(P.t(s*.11,th.colors.ac,th.colors.bg),'repeat');x.fillRect(0,0,s,s)});
+const paperIcon=(th,id)=>icon('pa:'+id+colKey(th),(x,s)=>drawPaper(x,Object.assign({},th,{paper:id}),s*2.2,s*2.2,rng(3)));
+const frameIcon=(th,id)=>icon('fr:'+id+colKey(th),(x,s)=>{x.fillStyle=th.colors.bg;x.fillRect(0,0,s,s);drawFramed(x,Object.assign({},th,{frame:id,washi:'none',filter:'none',capFont:'zenmaru'}),sampleImg(),{cx:s/2,cy:s/2,w:s*.7,h:s*.78,rot:0},'',{u:s/55,R:rng(2),idx:0,tapeVar:0,no:1,stampNo:84,country:'JAPAN'})});
+const washiIcon=(th,id)=>icon('w:'+id+colKey(th),(x,s)=>{x.fillStyle=th.colors.bg;x.fillRect(0,0,s,s);if(id==='none'){x.strokeStyle=rgba(th.colors.ink,.3);x.lineWidth=4;circ(x,s/2,s/2,s*.2);x.stroke();x.beginPath();x.moveTo(s*.36,s*.64);x.lineTo(s*.64,s*.36);x.stroke();return}drawTape(x,Object.assign({},th,{washi:id}),s/2,s/2,s*.95,s*.3,-.4,th.colors.ac)});
+let fontsReady=false;
+const stickerIcon=(th,id)=>icon('s:'+id+colKey(th)+th.ch+(fontsReady?1:0),(x,s)=>{x.fillStyle=th.colors.bg;x.fillRect(0,0,s,s);drawSticker(x,th,id,s/2,s/2,s*(id==='postmark'?.5:.62),0,STK_INFO)});
+const filterIcon=(img,id,key)=>icon('f:'+id+key,(x,s)=>{drawPhoto(x,img,0,0,s,s,id,.5)});
+
+/* ───────── 主頁 ───────── */
+let homeURLs=[];
+async function showHome(){
+  S.album=null;rq.list.length=0;if(io)io.disconnect();freeThumbs();
+  homeURLs.forEach(u=>URL.revokeObjectURL(u));homeURLs=[];
+  let albums=[];try{albums=(await dbAll('albums')).sort((a,b)=>(b.updated||0)-(a.updated||0))}catch(e){toast('讀唔到資料：'+e.message,3500)}
+  app.innerHTML='';
+  const hd=h('header',{class:'top'},h('div',{class:'top-in'},h('h1',null,'📔 相簿工房'),h('button',{class:'ib','aria-label':'更多',onclick:homeMenu},'⋯')));
+  const wrap=h('div',{class:'wrap'});
+  wrap.append(h('div',{class:'hero'},h('h2',null,'將旅行相變成一本相簿'),h('p',null,'揀相 → 講你想要嘅感覺 → 自動排版、配色、加裝飾。相片只會存喺你部機。')));
+  if(!isStandalone()&&!lsGet('hideTip')){const tip=h('div',{class:'tip'},h('span',null,'📲'),h('span',null,'iPhone 請用 Safari 撳「分享」→「加入主畫面」，之後由個 icon 開，相片先唔會俾 Safari 自動清走。'),h('button',{class:'x','aria-label':'收埋',onclick:()=>{lsSet('hideTip','1');tip.remove()}},'✕'));wrap.append(tip)}
+  if(!albums.length){
+    wrap.append(h('div',{class:'card empty'},h('div',{class:'big'},'🗾'),h('p',{style:'margin:8px 0 18px;color:var(--sub)'},'未有相簿。揀幾張旅行相，即刻整第一本！'),h('button',{class:'btn pri',onclick:newAlbumSheet},'＋ 整第一本相簿')));
+    app.append(hd,wrap);return;
+  }
+  const grid=h('div',{class:'albums'}),todo=[];
+  for(const a of albums){
+    normalizeAlbum(a);const img=h('img',{alt:''}),[ra,rb]=SIZES[a.size].r;
+    grid.append(h('button',{class:'alb',onclick:()=>goAlbum(a.id)},h('div',{class:'cv',style:`aspect-ratio:${ra}/${rb}`},img),h('b',null,a.title||'未命名'),h('small',null,`${Object.keys(a.photos).length} 張相 · ${a.pages.length} 頁`)));
+    todo.push([a,img]);
+  }
+  wrap.append(grid);app.append(hd,wrap,h('button',{class:'btn pri fab',onclick:newAlbumSheet},'＋ 新相簿'));
+  for(const[a,img]of todo){
+    if(!img.isConnected)return;const cover=a.pages.find(p=>p.kind==='cover')||a.pages[0];if(!cover)continue;
+    try{const cv=await renderPage(a,cover,440,{thumb:true});const u=await canvasURL(cv,.85);homeURLs.push(u);img.src=u}catch(e){console.warn(e)}
+  }
+}
+function homeMenu(){
+  const sh=openSheet('更多',h('div',null,
+    h('button',{class:'btn block',onclick:()=>{sh.close();importBackupPick()}},'📥 匯入相簿備份（.json）'),
+    h('button',{class:'btn block',style:'margin-top:10px',onclick:()=>{sh.close();aiSettings()}},'🤖 AI 設定（自動設計用）'),
+    h('button',{class:'btn block',style:'margin-top:10px',onclick:()=>{sh.close();helpSheet()}},'❓ 點樣用')));
+}
+function helpSheet(){
+  const P=(t,d)=>h('div',{style:'margin-bottom:14px'},h('b',null,t),h('p',{class:'hint',style:'font-size:14px;margin-top:2px'},d));
+  openSheet('點樣用',h('div',null,
+    P('① 整相簿','撳「＋ 新相簿」→ 打相簿名同想要嘅感覺 → 揀相（可以一次揀幾十張）。會自動按拍攝日期分做 Day 1、Day 2…，有 GPS 嘅相仲會自動寫埋地點。'),
+    P('② 改設計 🎨','打字講感覺（例如「京都 和風 復古」、「藍色 簡約」），或者逐樣揀：主題、顏色、裝飾圖案、和柄花紋、背景紙、相框、紙膠帶、貼紙、字體、濾鏡、排版。唔識揀就撳「🪄 叫 AI 幫我設計」。'),
+    P('③ 改內容 ✏️','撳任何一頁：改標題、地點、寫一句日記、每張相嘅說明，調相片次序或者搬去第二頁。🔀 換排版、✨ 換裝飾位置。'),
+    P('④ 儲存 ⬇︎','「匯出全部頁面」→ 分享選單揀「儲存影像」就會入「相片」App，可以直接 share 去 IG／WhatsApp。'),
+    P('⑤ 資料安全 🔒','相片壓縮後只存喺呢部機。記得「加入主畫面」，同埋間中喺相簿 ⋯ 撳「備份呢本相簿」keep 底。')));
+}
+
+/* ───────── 新相簿 ───────── */
+function exampleChips(on){return EXAMPLES.map(t=>h('button',{class:'chip',onclick:()=>on(t)},t))}
+function newAlbumSheet(){
+  const name=h('input',{value:'我的日本之旅',placeholder:'相簿名'});
+  const req=h('input',{placeholder:'例如：櫻花 粉紅 可愛'});
+  let size='4x5',per=3;
+  const body=h('div',null,
+    h('label',{class:'lbl'},'相簿名稱'),name,
+    h('label',{class:'lbl'},'想要咩感覺？（情景、風格、顏色都可以講）'),req,
+    h('div',{class:'chips',style:'margin-top:8px'},exampleChips(t=>{req.value=t})),
+    h('div',{class:'hint'},'唔肯定都唔緊要，整好之後隨時可以喺「🎨」再改。'),
+    h('label',{class:'lbl'},'頁面比例'),seg(Object.entries(SIZES).map(([k,v])=>[k,v.n.replace(/（.*）/,'')]),size,v=>{size=v}),
+    h('label',{class:'lbl'},'每頁最多幾多張相'),seg([[1,'1 張'],[2,'2 張'],[3,'3 張'],[4,'4 張']],per,v=>{per=+v}),
+    h('button',{class:'btn pri block',style:'margin-top:20px;padding:14px',onclick:()=>pickFiles(files=>{sh.close();createAlbum(name.value.trim()||'我的旅行',req.value.trim(),size,per,files)})},'📷 揀相片開始（可以一次揀好多張）'),
+    h('div',{class:'hint',style:'text-align:center'},'🔒 相片會壓縮後存喺呢部機，唔會上傳去任何地方。'));
+  const sh=openSheet('新相簿',body);
+}
+async function createAlbum(title,request,size,per,files){
+  const b=busy('處理緊相片…');
+  try{
+    const{metas,fail}=await importFiles(files,(i,n)=>b.set(i/n,`${i} / ${n}`));
+    if(!metas.length){b.close();toast('讀唔到任何相片'+(fail?'（格式唔支援）':''),3000);return}
+    const album={id:uid(),title,created:Date.now(),updated:Date.now(),size,perPage:per,theme:null,photos:{},pages:[],v:1};
+    addPhotosToPages(album,metas);
+    album.theme=parseRequest(request,null).th;
+    await dbPut('albums',cleanAlbum(album));
+    try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
+    b.close();if(fail)toast(`有 ${fail} 張相讀唔到，已略過`,3000);
+    goAlbum(album.id);
+  }catch(e){b.close();toast('出錯：'+e.message,3500)}
+}
+
+/* ───────── 相簿頁 ───────── */
+function normalizeAlbum(a){
+  a.photos=a.photos||{};a.pages=a.pages||[];a.size=SIZES[a.size]?a.size:'4x5';a.perPage=a.perPage||3;
+  const base=sceneRecipe(a.theme&&a.theme.scene||'sakura');a.theme=Object.assign(base,a.theme||{});
+  a.theme.colors=Object.assign({},base.colors,(a.theme&&a.theme.colors)||{});
+  return a;
+}
+function cleanAlbum(a){const o=Object.assign({},a);delete o._tv;delete o._pal;return o}
+let saveTimer=null;
+function saveAlbum(now){
+  const a=S.album;if(!a)return Promise.resolve();a.updated=Date.now();clearTimeout(saveTimer);
+  const run=()=>dbPut('albums',cleanAlbum(a)).catch(e=>toast('儲存失敗：'+e.message,3500));
+  if(now)return run();saveTimer=setTimeout(run,350);return Promise.resolve();
+}
+async function openAlbum(id){
+  const a=await dbGet('albums',id).catch(()=>null);
+  if(!a){toast('搵唔到呢本相簿');location.hash='';return}
+  normalizeAlbum(a);S.album=a;a._tv=1;renderAlbumView();window.scrollTo(0,0);
+}
+function renderAlbumView(){
+  const a=S.album;rq.list.length=0;if(io)io.disconnect();
+  $$('.pcard').forEach(c=>c._url&&URL.revokeObjectURL(c._url));
+  app.innerHTML='';
+  const hd=h('header',{class:'top'},h('div',{class:'top-in'},
+    h('button',{class:'ib','aria-label':'返回',style:'font-size:30px;line-height:1',onclick:goHome},'‹'),
+    h('h1',{id:'albTitle',style:'cursor:pointer',onclick:renameAlbum},a.title||'未命名'),
+    h('button',{class:'ib','aria-label':'主題設計',onclick:()=>themeSheet()},'🎨'),
+    h('button',{class:'ib','aria-label':'匯出',onclick:exportSheet},'⬇︎'),
+    h('button',{class:'ib','aria-label':'更多',onclick:albumMenu},'⋯')));
+  const list=h('div',{class:'pages'});a.pages.forEach(pg=>list.append(pageCard(pg)));
+  const wrap=h('div',{class:'wrap'},
+    h('div',{class:'row',style:'margin-top:12px'},h('button',{class:'btn sm',id:'themeBtn',onclick:()=>themeSheet()},'🎨 主題：'+(a.theme.name||'自訂')),h('span',{class:'muted grow',style:'text-align:right'},`${Object.keys(a.photos).length} 張相 · ${a.pages.length} 頁`)),
+    list,h('button',{class:'btn block',style:'margin-top:28px;padding:14px',onclick:addPhotos},'＋ 加相'));
+  app.append(hd,wrap);setupIO();
+}
+function pageLabel(pg){const a=S.album;if(pg.kind==='cover')return'封面';const i=pageInfo(a,pg);return i.title+(i.sub?' · '+i.sub:'')}
+function pageCard(pg){
+  const[ra,rb]=SIZES[S.album.size].r;
+  const img=h('img',{alt:''}),ld=h('div',{class:'ld'},h('div',{class:'spin'})),lbl=h('span',{class:'t'},pageLabel(pg));
+  const card=h('div',{class:'pcard'},
+    h('div',{class:'pimg',style:`aspect-ratio:${ra}/${rb}`,onclick:()=>editPage(pg)},img,ld),
+    h('div',{class:'pbar'},lbl,
+      h('button',{class:'btn sm',onclick:()=>editPage(pg)},'✏️ 編輯'),
+      pg.kind==='cover'?null:h('button',{class:'btn sm','aria-label':'換排版',onclick:()=>cycleLayout(pg)},'🔀'),
+      h('button',{class:'btn sm','aria-label':'換裝飾位置',onclick:()=>{pg.seed=newSeed();touch(pg)}},'✨'),
+      h('button',{class:'btn sm','aria-label':'儲存呢頁',onclick:()=>exportOne(pg)},'⬇︎')));
+  card._pg=pg;card._img=img;card._ld=ld;card._lbl=lbl;return card;
+}
+const cardOf=pg=>$$('.pcard').find(c=>c._pg===pg);
+function touch(pg){pg.v=(pg.v||0)+1;saveAlbum();const c=cardOf(pg);if(c){c._lbl.textContent=pageLabel(pg);queueCard(c)}}
+function cycleLayout(pg){
+  const all=allTemplates(Math.max(1,pg.photoIds.length)),cur=pg.lay>=0?pg.lay:(pg._layIdx!=null?pg._layIdx:-1);
+  pg.lay=(cur+1)%all.length;touch(pg);toast(`排版 ${pg.lay+1}／${all.length}（${LAYSTYLE[all[pg.lay].st].n}）`);
+}
+/* 只畫睇得到嘅頁，一頁一頁排隊畫 */
+let io=null;const rq={list:[],busy:false};
+function setupIO(){
+  if(io)io.disconnect();
+  io=new IntersectionObserver(es=>{for(const e of es){const c=e.target;c._vis=e.isIntersecting;if(c._vis)queueCard(c)}},{rootMargin:'900px 0px'});
+  $$('.pcard').forEach(c=>io.observe(c));
+}
+const sigOf=pg=>S.album._tv+':'+(pg.v||0)+':'+S.album.size;
+function queueCard(c){if(c._sig===sigOf(c._pg))return;if(!rq.list.includes(c))rq.list.push(c);c._ld.style.display='';pump()}
+async function pump(){
+  if(rq.busy)return;rq.busy=true;
+  try{
+    while(rq.list.length){
+      rq.list.sort((a,b)=>(b._vis?1:0)-(a._vis?1:0));
+      const c=rq.list.shift();if(!c.isConnected||!S.album)continue;
+      const s=sigOf(c._pg);if(c._sig===s){c._ld.style.display='none';continue}
+      try{const cv=await renderPage(S.album,c._pg,PREVIEW_W);const url=await canvasURL(cv,.9);if(c._url)URL.revokeObjectURL(c._url);c._url=url;c._img.src=url;c._sig=s}catch(e){console.error(e)}
+      c._ld.style.display=c._sig===sigOf(c._pg)?'none':'';
+    }
+  }finally{rq.busy=false}
+}
+function refreshAll(){if(!S.album)return;S.album._tv++;$$('.pcard').forEach(c=>{c._lbl.textContent=pageLabel(c._pg);if(c._vis)queueCard(c);else c._ld.style.display=''})}
+function goAlbum(id){S.fromHome=true;const t='#a/'+encodeURIComponent(id);if(location.hash===t)route();else location.hash=t}
+function goHome(){if(S.fromHome){S.fromHome=false;history.back()}else location.hash=''}
+function route(){
+  sheets.slice().forEach(s=>s.close());
+  const m=location.hash.match(/^#a\/(.+)$/);
+  if(m)openAlbum(decodeURIComponent(m[1]));else showHome();
+}
+async function renameAlbum(){
+  const a=S.album,v=await askText('相簿名稱',a.title,'相簿名');if(v==null||!v)return;
+  a.title=v;$('#albTitle').textContent=v;const cv=a.pages.find(p=>p.kind==='cover');saveAlbum();if(cv)touch(cv);
+}
+function addPhotos(){
+  pickFiles(async files=>{
+    const b=busy('加緊相…');
+    try{const{metas,fail}=await importFiles(files,(i,n)=>b.set(i/n,`${i} / ${n}`));addPhotosToPages(S.album,metas);S.album._pal=null;await saveAlbum(true);b.close();toast(`加咗 ${metas.length} 張相`+(fail?`（${fail} 張讀唔到）`:''),2600);renderAlbumView()}
+    catch(e){b.close();toast('出錯：'+e.message,3500)}
+  });
+}
+function albumMenu(){
+  const a=S.album;
+  const perSeg=seg([[1,'1'],[2,'2'],[3,'3'],[4,'4']],a.perPage,async v=>{
+    if(+v===a.perPage)return;
+    if(!await confirmBox('重新分頁？','會按拍攝日期重新排過所有頁，每頁自己改過嘅標題／日記會清走（相片說明會保留）。','重新分頁')){perSeg.setVal(a.perPage);return}
+    a.perPage=+v;repaginate(a);await saveAlbum(true);sh.close();renderAlbumView();
+  });
+  const sh=openSheet('相簿設定',h('div',null,
+    sec('頁面比例','',seg(Object.entries(SIZES).map(([k,v])=>[k,v.n.replace(/（.*）/,'')]),a.size,v=>{a.size=v;a._tv++;saveAlbum();renderAlbumView()})),
+    sec('每頁最多幾多張相','',perSeg),
+    h('button',{class:'btn block',onclick:()=>{sh.close();addPhotos()}},'＋ 加相'),
+    h('button',{class:'btn block',style:'margin-top:10px',onclick:()=>{sh.close();backupAlbum(a)}},'💾 備份呢本相簿（.json）'),
+    h('button',{class:'btn block danger',style:'margin-top:10px',onclick:()=>{sh.close();deleteAlbum()}},'🗑 刪除呢本相簿')));
+}
+async function deleteAlbum(){
+  const a=S.album;
+  if(!await confirmBox('刪除相簿？',`「${a.title}」同入面 ${Object.keys(a.photos).length} 張相會由呢個 app 刪除（你手機「相片」入面嘅原相唔受影響）。`,'刪除',true))return;
+  const b=busy('刪除緊…');for(const id of Object.keys(a.photos))await dbDel('photos',id).catch(()=>{});await dbDel('albums',a.id).catch(()=>{});b.close();
+  S.album=null;S.fromHome=false;toast('已刪除');location.hash='';
+}
+
+/* ───────── 主題設計（打字／逐樣揀／AI） ───────── */
+function previewBox(getA,pg){
+  const img=h('img',{alt:''}),ld=h('div',{class:'ld'},h('div',{class:'spin'}));
+  const el=h('div',{class:'sh-pv'},h('div',{class:'pvbox'},img,ld));
+  let tok=0,tm=null;
+  const update=()=>{clearTimeout(tm);tm=setTimeout(async()=>{
+    const my=++tok;ld.style.display='';
+    try{const cv=await renderPage(getA(),pg,640);if(my!==tok){cv.width=cv.height=0;return}const url=await canvasURL(cv,.88);if(img._u)URL.revokeObjectURL(img._u);img._u=url;img.src=url}catch(e){console.error(e)}
+    if(my===tok)ld.style.display='none';
+  },80)};
+  update();
+  return{el,update,dispose(){if(img._u)URL.revokeObjectURL(img._u)}};
+}
+async function themeSheet(focus){
+  const a=S.album,orig=JSON.stringify(a.theme);let th=JSON.parse(orig);
+  const pg=focus||a.pages.find(p=>p.kind==='photo'&&p.photoIds.length>=2)||a.pages.find(p=>p.kind==='photo')||a.pages[0];
+  if(!pg){toast('未有相片');return}
+  let fimg=sampleImg(),fkey='sample';const fid=Object.keys(a.photos)[0];
+  /* 字體同相片喺背景準備，準備好再重畫一次圖示 */
+  Promise.all([
+    loadFonts([['kurenaido','旅春京雪祭秋珈海雨湯富夜食鹿夢花星竹福夏'],['dot','0123456789.No'],['dela','TICKETAIR MAIL'],['mochiy','DAY 1'],['zenmaru','JAPAN京都'],['klee','par avion']]).then(()=>{fontsReady=true}),
+    fid?getBitmap(fid,true).then(b=>{fimg=b;fkey=fid}).catch(()=>{}):null
+  ]).then(()=>{if(sh&&sh.el.isConnected)rebuild()});
+  const pv=previewBox(()=>Object.assign({},a,{theme:th}),pg);
+  const err=h('div',{class:'err'}),hitsEl=h('div',{class:'pills'});
+  const req=h('input',{value:th.request||'',placeholder:'例如：京都 和風 復古／藍色 簡約'});
+  const showHits=hs=>{hitsEl.innerHTML='';if(hs&&hs.length){hitsEl.append(h('span',{class:'muted'},'認到：'),...hs.map(w=>h('span',{class:'pill'},w)))}else if(hs)hitsEl.append(h('span',{class:'muted'},'認唔到關鍵字，試吓用下面例子嘅字眼'))};
+  const gen=async()=>{
+    const v=req.value.trim();if(!v){err.textContent='打幾個字先，例如「櫻花 粉紅 可愛」';return}err.textContent='';
+    const r=parseRequest(v,th);let t2=r.th;
+    if(th.photoColors&&!r.hasColor){t2.photoColors=true;applyPal(t2,await albumPalette(a))}
+    th=t2;showHits(r.hits);rebuild();pv.update();
+  };
+  req.addEventListener('input',()=>{err.textContent=''});
+  req.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();req.blur();gen()}});
+  const assets=h('div');
+  const set=(k,v)=>{th[k]=v;rebuild();pv.update()};
+  function rebuild(){
+    const sc=sh?sh.body.scrollTop:0;assets.innerHTML='';
+    const C=th.colors;
+    /* 主題 */
+    assets.append(sec('主題（一撳成套換晒）',Object.keys(SCENES).length+' 款',hsc(...Object.entries(SCENES).map(([id,S0])=>{
+      const t0=sceneRecipe(id);
+      return h('button',{class:'scene'+(th.scene===id?' on':''),onclick:()=>{const caps=th.caps,pc=th.photoColors;th=sceneRecipe(id);th.caps=caps;if(pc){th.photoColors=true;applyPal(th,a._pal)}showHits(null);rebuild();pv.update()}},
+        h('div',{class:'sw'},...S0.c.map(c=>h('i',{style:`background:${c}`})),motifIcon(t0,S0.m[0])),h('b',null,S0.n),h('small',null,S0.jp));
+    }))));
+    /* 顏色 */
+    const colIn=(k,label)=>{const inp=h('input',{type:'color',value:C[k]});inp.addEventListener('input',()=>{th.colors[k]=inp.value.toUpperCase();th.photoColors=false;pv.update()});inp.addEventListener('change',()=>{fixContrast(th);rebuild()});return h('label',{style:'display:flex;flex-direction:column;align-items:center;gap:3px;font-size:12px;color:var(--sub)'},inp,label)};
+    const pcb=h('input',{type:'checkbox',checked:!!th.photoColors});
+    pcb.addEventListener('change',async()=>{if(pcb.checked){const pal=await albumPalette(a);if(!pal){pcb.checked=false;toast('抽唔到顏色');return}th.photoColors=true;applyPal(th,pal)}else{th.photoColors=false;const s0=sceneRecipe(th.scene);th.colors=s0.colors;th.dark=s0.dark}rebuild();pv.update()});
+    const dcb=h('input',{type:'checkbox',checked:!!th.dark});
+    dcb.addEventListener('change',()=>{th.dark=dcb.checked;const p=paletteFromAccent(th.colors.ac,th.dark,th.colors.ac2);th.colors.bg=p.bg;th.colors.ink=p.ink;rebuild();pv.update()});
+    assets.append(sec('顏色','',h('div',{class:'row',style:'gap:14px;flex-wrap:wrap'},colIn('bg','背景'),colIn('ac','主色'),colIn('ac2','副色'),colIn('ink','文字')),
+      h('div',{class:'row wrap2',style:'margin-top:10px;gap:16px'},h('label',{class:'row',style:'gap:6px;font-size:14px'},pcb,'🎨 跟我啲相抽顏色'),h('label',{class:'row',style:'gap:6px;font-size:14px'},dcb,'🌙 深色底'))));
+    /* 裝飾圖案 */
+    const den=h('input',{type:'range',min:0,max:100,step:1,value:th.density}),dsz=h('input',{type:'range',min:60,max:180,step:5,value:Math.round((th.decoScale||1)*100)});
+    den.addEventListener('input',()=>{th.density=+den.value;pv.update()});dsz.addEventListener('input',()=>{th.decoScale=+dsz.value/100;pv.update()});
+    assets.append(sec('裝飾圖案（最多揀 3 款）',`已揀 ${th.motifs.length}／3`,hsc(...Object.entries(MOTIFS).map(([id,M])=>{
+      const on=th.motifs.includes(id);
+      return h('button',{class:'tile'+(on?' on':''),onclick:()=>{let m=th.motifs.slice();if(on)m=m.filter(k=>k!==id);else{m.push(id);if(m.length>3)m.shift()}set('motifs',m)}},h('div',{class:'im'},motifIcon(th,id)),M.n);
+    })),h('div',{class:'row',style:'gap:10px;margin-top:4px'},h('span',{class:'muted',style:'width:34px'},'數量'),den),h('div',{class:'row',style:'gap:10px'},h('span',{class:'muted',style:'width:34px'},'大細'),dsz)));
+    /* 花紋 */
+    assets.append(sec('和柄花紋','',hsc(...Object.entries(PATTERNS).map(([id,P])=>h('button',{class:'tile'+(th.pattern===id?' on':''),onclick:()=>{th.pattern=id;if(id!=='none'&&(!th.patPos||th.patPos==='none'))th.patPos='band';rebuild();pv.update()}},h('div',{class:'im'},patternIcon(th,id)),P.n))),
+      h('div',{class:'chips'},...Object.entries(PAT_POS).filter(([k])=>k!=='none').map(([k,n])=>h('button',{class:'chip'+(th.patPos===k?' on':''),onclick:()=>{if(th.pattern==='none')th.pattern='seigaiha';set('patPos',k)}},n)))));
+    /* 背景紙 */
+    assets.append(sec('背景紙','',hsc(...Object.entries(PAPERS).map(([id,P])=>h('button',{class:'tile'+(th.paper===id?' on':''),onclick:()=>set('paper',id)},h('div',{class:'im'},paperIcon(th,id)),P.n)))));
+    /* 相框 */
+    assets.append(sec('相框','',hsc(...Object.entries(FRAMES).map(([id,F])=>h('button',{class:'tile'+(th.frame===id?' on':''),onclick:()=>set('frame',id)},h('div',{class:'im'},frameIcon(th,id)),F.n)))));
+    /* 紙膠帶 */
+    assets.append(sec('紙膠帶','',hsc(...Object.entries(WASHI).map(([id,W])=>h('button',{class:'tile'+(th.washi===id?' on':''),onclick:()=>set('washi',id)},h('div',{class:'im'},washiIcon(th,id)),W.n)))));
+    /* 貼紙 */
+    assets.append(sec('貼紙／印章（最多 2 個）',`已揀 ${th.stickers.length}／2`,hsc(...Object.entries(STICKERS).map(([id,St])=>{
+      const on=th.stickers.includes(id);
+      return h('button',{class:'tile'+(on?' on':''),onclick:()=>{let s=th.stickers.slice();if(on)s=s.filter(k=>k!==id);else{s.push(id);if(s.length>2)s.shift()}set('stickers',s)}},h('div',{class:'im'},stickerIcon(th,id)),St.n);
+    }))));
+    /* 字體 */
+    const fchips=k=>h('div',{class:'chips'},...Object.entries(FONTS).map(([id,F])=>h('button',{class:'chip'+(th[k]===id?' on':''),style:`font-family:"${F.f}",var(--sans)`,onclick:()=>set(k,id)},F.n+'・旅の記錄')));
+    assets.append(sec('標題字體','',fchips('titleFont')),sec('文字字體（相片說明、日記）','',fchips('capFont')));
+    /* 濾鏡 */
+    assets.append(sec('相片濾鏡','',hsc(...Object.entries(FILTERS).map(([id,F])=>h('button',{class:'tile'+(th.filter===id?' on':''),onclick:()=>set('filter',id)},h('div',{class:'im'},filterIcon(fimg,id,fkey)),F.n)))));
+    /* 排版 */
+    const ccb=h('input',{type:'checkbox',checked:th.caps!==false});ccb.addEventListener('change',()=>set('caps',ccb.checked));
+    assets.append(sec('排版','',seg(Object.entries(LAYSTYLE).map(([k,v])=>[k,v.n]),th.layout,v=>{th.layout=v;a.pages.forEach(p=>{p.lay=-1});pv.update()}),
+      h('label',{class:'row',style:'gap:6px;font-size:14px;margin-top:10px'},ccb,'顯示相片說明文字')));
+    assets.append(h('button',{class:'btn block',onclick:()=>{th=JSON.parse(orig);req.value=th.request||'';showHits(null);rebuild();pv.update()}},'↩︎ 還原返打開前嘅設計'));
+    if(sh)sh.body.scrollTop=sc;
+  }
+  const body=h('div',null,
+    sec('你想要咩感覺？','',h('div',{class:'row'},req,h('button',{class:'btn pri',onclick:gen},'生成')),err,hitsEl,
+      h('div',{class:'hs',style:'margin-top:8px'},...exampleChips(t=>{req.value=t;gen()})),
+      h('button',{class:'btn block',style:'margin-top:6px',onclick:()=>aiSheet(req.value.trim(),th,t2=>{th=t2;req.value=t2.request||req.value;showHits(null);rebuild();pv.update()})},'🪄 叫 AI 幫我設計')),
+    assets);
+  let sh=null;
+  const done=h('button',{class:'btn pri sm',onclick:()=>sh.close(true)},'完成');
+  sh=openSheet('🎨 主題設計',body,{tall:true,preview:pv.el,actions:[done],onClose:()=>{
+    pv.dispose();
+    if(JSON.stringify(th)!==orig){a.theme=th;saveAlbum();refreshAll();const tb=$('#themeBtn');if(tb)tb.textContent='🎨 主題：'+(th.name||'自訂')}
+  }});
+  assets.append(h('div',{style:'display:flex;justify-content:center;padding:30px'},h('div',{class:'spin'})));
+  setTimeout(rebuild,60);
+}
+function aiSheet(reqText,base,onResult){
+  const a=S.album,key=aiKeyGet();
+  const ta=h('textarea',{placeholder:'講多啲你想要嘅感覺，例如：想要似宮崎駿動畫咁溫暖，有夏天草地嘅感覺'});ta.value=reqText||'';
+  const err=h('div',{class:'err'}),paste=h('textarea',{placeholder:'將 ChatGPT 嘅回覆全選複製，貼喺度'});
+  const promptBox=h('textarea',{class:'mono',style:'display:none;margin-top:8px;height:140px',readOnly:true});
+  const withPh=h('input',{type:'checkbox',checked:true});
+  const auto=key?sec('有 AI Key：一撳就得','',
+    h('label',{class:'row',style:'gap:6px;font-size:14px;margin-bottom:10px'},withPh,'附 3 張細相俾 AI 參考色調'),
+    h('button',{class:'btn pri block',onclick:async()=>{
+      err.textContent='';const b=busy('AI 設計緊…');
+      try{const urls=withPh.checked?await photoDataUrls(a,3):[];const txt=await aiCall(aiPrompt(a,ta.value.trim(),urls.length>0),urls);const t2=recipeFromAI(parseAIReply(txt),base);t2.request=ta.value.trim();b.close();sh.close();onResult(t2);toast('AI 設計好咗 ✨')}
+      catch(e){b.close();err.textContent=e.message}
+    }},'🪄 AI 自動設計'),
+    h('div',{class:'hint'},aiKeyOwn()?'用緊你喺呢度設定嘅 Key。':'用緊你「旅程手帳」嘅 AI Key。')):null;
+  const body=h('div',null,
+    sec('你想要嘅感覺','',ta),auto,
+    sec(key?'或者：免費 copy-paste 做法':'免費做法（ChatGPT／Gemini 都得）','',
+      h('p',{class:'hint',style:'font-size:14px;margin:0 0 8px'},'① 撳「複製指令」→ ② 去 ChatGPT 貼上送出 → ③ 將佢回覆全選複製，貼返落下面個框 → ④ 撳「套用」'),
+      h('button',{class:'btn block',onclick:async()=>{const p=aiPrompt(a,ta.value.trim(),false);const ok=await copyText(p);if(ok){toast('已複製指令，去 ChatGPT 貼上');promptBox.style.display='none'}else{promptBox.value=p;promptBox.style.display='';toast('自動複製唔到，請喺下面全選複製')}}},'📋 複製指令'),promptBox,
+      h('div',{style:'height:10px'}),paste,
+      h('button',{class:'btn pri block',style:'margin-top:10px',onclick:()=>{err.textContent='';try{const t2=recipeFromAI(parseAIReply(paste.value),base);t2.request=ta.value.trim();sh.close();onResult(t2);toast('已套用 AI 設計 ✨')}catch(e){err.textContent=e.message}}},'套用 AI 設計')),
+    err,
+    key?null:h('p',{class:'hint'},'想一撳就自動設計？去主頁 ⋯ →「AI 設定」貼入免費 Gemini Key。'));
+  const sh=openSheet('🪄 AI 幫我設計',body,{tall:true});
+}
+function aiSettings(){
+  const own=aiKeyOwn(),shared=aiKeyShared();
+  const inp=h('input',{type:'password',placeholder:'貼入 API Key（AIza… / sk-… / sk-ant-…）',value:own,autocomplete:'off'});
+  const sh=openSheet('🤖 AI 設定',h('div',null,
+    h('p',{class:'hint',style:'font-size:14px;margin:0 0 10px'},'有 Key 就可以一撳「AI 自動設計」。冇 Key 都得，用 copy-paste 去 ChatGPT 嘅免費做法。'),
+    !own&&shared?h('div',{class:'tip',style:'margin:0 0 12px'},'✅ 已經搵到你「旅程手帳」嘅 Key，唔使再貼都用得。'):null,
+    inp,
+    h('div',{class:'row',style:'margin-top:10px'},h('button',{class:'btn pri grow',onclick:()=>{aiKeySet(inp.value.trim());sh.close();toast(inp.value.trim()?'已儲存 Key':'已清除')}},'儲存'),own?h('button',{class:'btn grow',onclick:()=>{aiKeySet('');sh.close();toast('已清除')}},'清除'):null),
+    h('p',{class:'hint'},'支援 Google Gemini（AIza…／AQ…，aistudio.google.com 免費申請）、OpenAI（sk-…）、Claude（sk-ant-…）。'),
+    h('p',{class:'hint'},'🔒 Key 只會存喺呢部機，唔會寫入網站檔案，亦唔會跟備份檔出街。')));
+}
+
+/* ───────── 編輯一頁 ───────── */
+async function editPage(pg){
+  const a=S.album,isCover=pg.kind==='cover';
+  const pv=previewBox(()=>a,pg);let structural=false;
+  const changed=()=>{pg.v=(pg.v||0)+1;pv.update();saveAlbum()};
+  const auto=pageInfo(a,Object.assign({},pg,{title:null,sub:null,place:null}));
+  const field=(label,val,ph,on,multi)=>{const el=h(multi?'textarea':'input',{placeholder:ph||''});el.value=val||'';el.addEventListener('input',()=>on(el.value));return[h('label',{class:'lbl'},label),el]};
+  const body=h('div');let sh=null;
+  if(isCover){
+    body.append(...field('相簿名稱',a.title,'相簿名',v=>{a.title=v||'我的旅行';const t=$('#albTitle');if(t)t.textContent=a.title;changed()}),
+      ...field('副標題（留空＝自動：日期＋地點）',pg.sub,auto.sub||'例如：2025 春・大阪京都',v=>{pg.sub=v===''?null:v;changed()}),
+      ...field('一句說話（可以留空）',pg.note,'例如：同屋企人第一次去日本 ♡',v=>{pg.note=v;changed()},true));
+    const grid=h('div',{class:'thumbs'});
+    for(const id of Object.keys(a.photos)){const im=h('img',{alt:''});thumbURL(id).then(u=>{im.src=u});const b=h('button',{class:pg.photoIds[0]===id?'on':'',onclick:()=>{pg.photoIds=[id];$$('button',grid).forEach(x=>x.classList.remove('on'));b.classList.add('on');changed()}},im);grid.append(b)}
+    body.append(h('label',{class:'lbl'},'封面相（撳一張）'),grid);
+  }else{
+    body.append(...field('標題（留空＝自動）',pg.title,auto.title,v=>{pg.title=v===''?null:v;changed()}),
+      ...field('地點（留空＝由 GPS 估）',pg.place,auto.place||'例如：京都・清水寺',v=>{pg.place=v===''?null:v;changed()}),
+      ...field('副標題（留空＝自動：日期＋地點）',pg.sub,auto.sub||'',v=>{pg.sub=v===''?null:v;changed()}),
+      ...field('一句日記（可以留空）',pg.note,'例如：第一次食到咁好食嘅抹茶雪糕！',v=>{pg.note=v;changed()},true));
+    const rows=h('div');
+    const photoPages=()=>a.pages.filter(p=>p.kind==='photo');
+    const neighbor=d=>{const pp=photoPages(),i=pp.indexOf(pg);return pp[i+d]||null};
+    const afterEmpty=()=>{if(!pg.photoIds.length){a.pages=a.pages.filter(p=>p!==pg);structural=true;sh.close();return true}return false};
+    const renderRows=()=>{
+      rows.innerHTML='';
+      pg.photoIds.forEach((id,i)=>{
+        const mt=a.photos[id];if(!mt)return;const im=h('img',{alt:''});thumbURL(id).then(u=>{im.src=u});
+        const cap=h('input',{placeholder:'相片說明（例如：清水寺）',style:'padding:7px 10px;font-size:15px'});cap.value=mt.cap||'';
+        cap.addEventListener('input',()=>{mt.cap=cap.value;changed()});
+        const swap=j=>{const ar=pg.photoIds;[ar[i],ar[j]]=[ar[j],ar[i]];pg.fixed=true;changed();renderRows()};
+        const move=d=>{const t=neighbor(d);if(!t)return;if(t.photoIds.length>=4){toast('嗰頁滿咗（每頁最多 4 張）');return}pg.photoIds.splice(i,1);d<0?t.photoIds.push(id):t.photoIds.unshift(id);t.v=(t.v||0)+1;structural=true;toast(d<0?'搬咗去上一頁':'搬咗去下一頁');if(afterEmpty())return;changed();renderRows()};
+        const del=async()=>{if(!await confirmBox('移除呢張相？','會由呢本相簿移除（你手機「相片」入面嘅原相唔受影響）。','移除',true))return;pg.photoIds.splice(i,1);structural=true;if(afterEmpty())return;changed();renderRows()};
+        rows.append(h('div',{class:'ph-row'},im,h('div',{class:'grow'},cap,h('div',{class:'ops'},
+          i>0?h('button',{onclick:()=>swap(i-1)},'◀ 前'):null,
+          i<pg.photoIds.length-1?h('button',{onclick:()=>swap(i+1)},'後 ▶'):null,
+          neighbor(-1)?h('button',{onclick:()=>move(-1)},'⤴ 上一頁'):null,
+          neighbor(1)?h('button',{onclick:()=>move(1)},'⤵ 下一頁'):null,
+          h('button',{onclick:del},'🗑 移除')))));
+      });
+    };
+    renderRows();
+    body.append(h('label',{class:'lbl'},'相片（說明文字會顯示喺相下面）'),rows,
+      h('div',{class:'row wrap2',style:'margin-top:14px'},
+        h('button',{class:'btn sm',onclick:()=>{const all=allTemplates(Math.max(1,pg.photoIds.length)),cur=pg.lay>=0?pg.lay:(pg._layIdx!=null?pg._layIdx:-1);pg.lay=(cur+1)%all.length;changed();toast(`排版 ${pg.lay+1}／${all.length}`)}},'🔀 換排版'),
+        h('button',{class:'btn sm',onclick:()=>{pg.seed=newSeed();changed()}},'✨ 換裝飾位置'),
+        h('button',{class:'btn sm',onclick:()=>{pg.lay=-1;pg.fixed=false;changed();toast('交返俾自動排版')}},'🪄 自動排版')),
+      h('button',{class:'btn block danger',style:'margin-top:18px',onclick:async()=>{if(!await confirmBox('刪除呢一頁？',`呢頁 ${pg.photoIds.length} 張相會由相簿移除。`,'刪除',true))return;a.pages=a.pages.filter(p=>p!==pg);structural=true;sh.close()}},'🗑 刪除呢一頁'));
+  }
+  sh=openSheet(isCover?'✏️ 編輯封面':'✏️ 編輯呢頁',body,{tall:true,preview:pv.el,actions:[h('button',{class:'btn pri sm',onclick:()=>sh.close(true)},'完成')],onClose:async()=>{
+    pv.dispose();
+    if(structural){await dropOrphans(a);await saveAlbum(true);renderAlbumView()}
+    else{await saveAlbum(true);const c=cardOf(pg);if(c){c._lbl.textContent=pageLabel(pg);queueCard(c)}if(isCover)$$('.pcard').forEach(c=>{c._lbl.textContent=pageLabel(c._pg)})}
+  }});
+}
+
+/* ───────── 匯出／備份 ───────── */
+function exportSheet(){
+  const a=S.album;let res=1080;const out=h('div');
+  const allBtn=h('button',{class:'btn pri block',onclick:async()=>{
+    allBtn.disabled=true;const b=busy('砌緊每一頁…'),files=[];
+    try{for(let i=0;i<a.pages.length;i++){b.set(i/a.pages.length,`${i+1} / ${a.pages.length}`);files.push(await canvasFile(await renderPage(a,a.pages[i],res),fileName(a,i)))}}
+    catch(e){toast('出錯：'+e.message,3500)}
+    b.close();allBtn.disabled=false;out.innerHTML='';if(!files.length)return;
+    out.append(h('p',{class:'hint',style:'font-size:14px'},`✅ 砌好 ${files.length} 頁。撳下面個掣，喺分享選單揀「儲存 ${Math.min(10,files.length)} 張影像」就會入晒「相片」App。`));
+    for(let i=0;i<files.length;i+=10){const part=files.slice(i,i+10);out.append(h('button',{class:'btn block',style:'margin-top:8px',onclick:()=>shareOrDownload(part)},`📤 儲存／分享 第 ${i+1}–${i+part.length} 頁`))}
+  }},'📚 匯出全部頁面（JPG）');
+  openSheet('⬇︎ 匯出',h('div',null,
+    sec('解像度','',seg([[1080,'標準 1080px'],[2048,'高清 2048px']],res,v=>{res=+v})),
+    allBtn,out,
+    h('p',{class:'hint'},'每一頁都係一張圖，可以直接放 IG、WhatsApp，或者拎去沖印。想淨係要一頁，可以撳該頁下面嘅 ⬇︎。'),
+    h('div',{style:'height:14px'}),
+    sec('備份','',h('button',{class:'btn block',onclick:()=>backupAlbum(a)},'💾 備份呢本相簿（.json，可以喺第二部機匯入）'))));
+}
+async function exportOne(pg){
+  const a=S.album,b=busy('砌緊呢頁…');let file;
+  try{file=await canvasFile(await renderPage(a,pg,1080),fileName(a,a.pages.indexOf(pg)))}catch(e){b.close();toast('出錯：'+e.message);return}
+  b.close();const url=URL.createObjectURL(file);
+  openSheet('儲存呢頁',h('div',null,h('img',{class:'exp-img',src:url,alt:''}),
+    h('p',{class:'hint',style:'text-align:center'},'📱 iPhone：長按上面張圖 →「加至相片」'),
+    h('div',{class:'row',style:'margin-top:12px'},h('button',{class:'btn pri grow',onclick:()=>shareOrDownload([file])},'📤 分享／儲存'),h('button',{class:'btn grow',onclick:()=>downloadFiles([file])},'⬇︎ 下載'))),
+    {onClose:()=>setTimeout(()=>URL.revokeObjectURL(url),1500)});
+}
+async function backupAlbum(a){
+  const b=busy('整理緊備份…');
+  try{
+    const parts=['{"app":"albumKobo","v":1,"album":',JSON.stringify(cleanAlbum(a)),',"photos":{'],ids=Object.keys(a.photos);let first=true;
+    for(let i=0;i<ids.length;i++){
+      b.set(i/ids.length,`${i+1} / ${ids.length}`);const rec=await dbGet('photos',ids[i]);if(!rec)continue;
+      const full=(await bufToDataURL(rec.buf)).split(',')[1],tb=rec.tb?(await bufToDataURL(rec.tb)).split(',')[1]:'';
+      parts.push((first?'':',')+JSON.stringify(ids[i])+':{"buf":"'+full+'","tb":"'+tb+'"}');first=false;
+    }
+    parts.push('}}');
+    const d=new Date(),stamp=`${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}`;
+    const file=new File([new Blob(parts,{type:'application/json'})],`相簿備份-${safeName(a.title)}-${stamp}.json`,{type:'application/json'});
+    b.close();await shareOrDownload([file]);
+  }catch(e){b.close();toast('備份失敗：'+e.message,3500)}
+}
+function b64ToBuf(s){const bin=atob(s),u=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return u.buffer}
+function importBackupPick(){
+  const inp=$('#jsonPick');inp.value='';
+  inp.onchange=async()=>{
+    const f=inp.files[0];if(!f)return;const b=busy('匯入緊…');
+    try{
+      const j=JSON.parse(await f.text());if(j.app!=='albumKobo'||!j.album)throw new Error('唔係相簿工房嘅備份檔');
+      const map={},ids=Object.keys(j.photos||{});
+      for(let i=0;i<ids.length;i++){b.set(i/ids.length,`${i+1} / ${ids.length}`);const p=j.photos[ids[i]],nid=uid();await dbPut('photos',{id:nid,buf:b64ToBuf(p.buf),tb:p.tb?b64ToBuf(p.tb):null});map[ids[i]]=nid}
+      const al=normalizeAlbum(j.album),ph={};al.id=uid();
+      for(const k in al.photos)if(map[k])ph[map[k]]=Object.assign({},al.photos[k],{id:map[k]});
+      al.photos=ph;al.pages.forEach(p=>{p.id=uid();p.photoIds=(p.photoIds||[]).map(id=>map[id]).filter(Boolean)});
+      al.pages=al.pages.filter(p=>p.kind==='cover'||p.photoIds.length);al.updated=Date.now();
+      await dbPut('albums',cleanAlbum(al));b.close();toast('匯入咗「'+al.title+'」',2600);
+      if(location.hash&&location.hash!=='#')location.hash='';else showHome();
+    }catch(e){b.close();toast('匯入失敗：'+e.message,3500)}
+  };
+  inp.click();
+}
+
+/* ───────── 開始 ───────── */
+function makeTouchIcon(){
+  try{
+    const[c,x]=tileCv(180,180);x.fillStyle='#F6DFE7';x.fillRect(0,0,180,180);
+    x.save();x.translate(90,96);x.rotate(-.08);x.shadowColor='rgba(0,0,0,.18)';x.shadowBlur=10;x.shadowOffsetY=3;x.fillStyle='#fff';x.fillRect(-52,-60,104,124);x.shadowColor='transparent';x.drawImage(sampleImg(),40,20,220,180,-44,-52,88,88);x.restore();
+    drawTape(x,{washi:'stripe',motifs:[]},90,38,64,18,-.12,'#C0607E');drawMotif(x,'sakura',142,148,36,.3,'#E48FA9','#C9667F');
+    document.head.append(h('link',{rel:'apple-touch-icon',href:c.toDataURL('image/png')}));
+  }catch(e){}
+}
+makeTouchIcon();
+if('serviceWorker'in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{});
+window.addEventListener('hashchange',route);
+route();
+</script>
+</body>
+</html>
